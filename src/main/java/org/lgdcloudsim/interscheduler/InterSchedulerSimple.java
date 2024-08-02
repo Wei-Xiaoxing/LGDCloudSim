@@ -70,6 +70,7 @@ public class InterSchedulerSimple implements InterScheduler {
      * The target of the inter-scheduler.
      * It can be set to {@link InterSchedulerSimple#HOST_TARGET}, {@link InterSchedulerSimple#DC_TARGET} or {@link InterSchedulerSimple#MIXED_TARGET}.
      */
+    @Getter
     int target;
 
     /**
@@ -77,6 +78,7 @@ public class InterSchedulerSimple implements InterScheduler {
      * It is a flag to set whether the instance group is allowed to be forwarded to other data centers after being sent to the target data center.
      * Note that it is only used when inter-scheduler schedules instance groups to data centers but not schedules the instance of the instance group to hosts.
      */
+    @Getter
     boolean isSupportForward;
 
     /**
@@ -235,8 +237,21 @@ public class InterSchedulerSimple implements InterScheduler {
         double end = System.currentTimeMillis();
 
         this.scheduleTime = Math.max(0.1, end - start);
+
+        setInstanceGroupInterScheduleEndTime(waitSchedulingInstanceGroups, getSimulation().clock() + this.scheduleTime);
+
+        if(end-start<0.1) {
+            LOGGER.warn("{}: interSchedule schedule time is less than 0.1 ms ({} ms).", simulation.clockStr(), end-start);
+        }
+
         interSchedulerResult.setOutDatedUserRequests(queueResult.getOutDatedItems());
         return interSchedulerResult;
+    }
+
+    private void setInstanceGroupInterScheduleEndTime(List<InstanceGroup> waitSchedulingInstanceGroups, double scheduleEndTime) {
+        for (InstanceGroup instanceGroup : waitSchedulingInstanceGroups) {
+            instanceGroup.setInterScheduleEndTime(scheduleEndTime);
+        }
     }
 
     /**
@@ -249,14 +264,14 @@ public class InterSchedulerSimple implements InterScheduler {
      */
     protected InterSchedulerResult scheduleMixed(List<InstanceGroup> instanceGroups) {
         List<Datacenter> allDatacenters = simulation.getCollaborationManager().getDatacenters(collaborationId);
-        InterSchedulerResult interSchedulerResult = new InterSchedulerResult(collaborationId, target, isSupportForward, allDatacenters);
+        InterSchedulerResult interSchedulerResult = new InterSchedulerResult(this, allDatacenters);
         Map<InstanceGroup, List<Datacenter>> instanceGroupAvailableDatacenters = filterSuitableDatacenterByNetwork(instanceGroups);
 
         for (Map.Entry<InstanceGroup, List<Datacenter>> scheduleResEntry : instanceGroupAvailableDatacenters.entrySet()) {
             InstanceGroup instanceGroupToBeScheduled = scheduleResEntry.getKey();
             List<Datacenter> availableDatacenters = scheduleResEntry.getValue();
 
-            if (availableDatacenters.size() == 0) {
+            if (availableDatacenters.isEmpty()) {
                 interSchedulerResult.getFailedInstanceGroups().add(instanceGroupToBeScheduled);
             } else {
                 Datacenter scheduleResult = scheduleMixedInstanceGroup(instanceGroupToBeScheduled, availableDatacenters);
@@ -299,7 +314,7 @@ public class InterSchedulerSimple implements InterScheduler {
      * @return the data center where the instance group is scheduled
      */
     private Datacenter selectDcToForward(InstanceGroup instanceGroup, List<Datacenter> availableDatacenters) {
-        if (availableDatacenters.size() == 0) {
+        if (availableDatacenters.isEmpty()) {
             return Datacenter.NULL;
         }
 
@@ -360,10 +375,11 @@ public class InterSchedulerSimple implements InterScheduler {
      */
     protected InterSchedulerResult scheduleToDatacenter(List<InstanceGroup> instanceGroups) {
         List<Datacenter> allDatacenters = simulation.getCollaborationManager().getDatacenters(collaborationId);
-        InterSchedulerResult interSchedulerResult = new InterSchedulerResult(collaborationId, target, isSupportForward, allDatacenters);
+        InterSchedulerResult interSchedulerResult = new InterSchedulerResult(this, allDatacenters);
         Map<InstanceGroup, List<Datacenter>> instanceGroupAvailableDatacenters = filterSuitableDatacenterByNetwork(instanceGroups);
+
         for (Map.Entry<InstanceGroup, List<Datacenter>> scheduleRes : instanceGroupAvailableDatacenters.entrySet()) {
-            if (scheduleRes.getValue().size() == 0) {
+            if (scheduleRes.getValue().isEmpty()) {
                 interSchedulerResult.getFailedInstanceGroups().add(scheduleRes.getKey());
             } else {
                 Datacenter target = scheduleRes.getValue().get(random.nextInt(scheduleRes.getValue().size()));
@@ -382,14 +398,14 @@ public class InterSchedulerSimple implements InterScheduler {
      */
     protected InterSchedulerResult scheduleToHost(List<InstanceGroup> instanceGroups) {
         List<Datacenter> allDatacenters = simulation.getCollaborationManager().getDatacenters(collaborationId);
-        InterSchedulerResult interSchedulerResult = new InterSchedulerResult(collaborationId, target, allDatacenters);
+        InterSchedulerResult interSchedulerResult = new InterSchedulerResult(this, allDatacenters);
 
         Map<InstanceGroup, List<Datacenter>> instanceGroupAvailableDatacenters = filterSuitableDatacenterByNetwork(instanceGroups);
 
         for (Map.Entry<InstanceGroup, List<Datacenter>> scheduleResEntry : instanceGroupAvailableDatacenters.entrySet()) {
             InstanceGroup instanceGroupToBeScheduled = scheduleResEntry.getKey();
             List<Datacenter> availableDatacenters = scheduleResEntry.getValue();
-            if (availableDatacenters.size() == 0) {
+            if (availableDatacenters.isEmpty()) {
                 interSchedulerResult.getFailedInstanceGroups().add(instanceGroupToBeScheduled);
             } else {
                 Datacenter scheduledDc = scheduleForInstanceGroupAndInstance(instanceGroupToBeScheduled, availableDatacenters);
@@ -551,7 +567,7 @@ public class InterSchedulerSimple implements InterScheduler {
 
     @Override
     public boolean isQueuesEmpty() {
-        return instanceGroupQueue.size() == 0 && retryInstanceGroupQueue.size() == 0;
+        return instanceGroupQueue.isEmpty() && retryInstanceGroupQueue.isEmpty();
     }
 
     @Override
@@ -624,6 +640,6 @@ public class InterSchedulerSimple implements InterScheduler {
     @Override
     public void setDatacenter(Datacenter datacenter) {
         this.datacenter = datacenter;
-        this.name = name + "-dc" + datacenter.getId();
+        this.name = "Datacenter" + datacenter.getId() + "-InterScheduler" + id;
     }
 }
