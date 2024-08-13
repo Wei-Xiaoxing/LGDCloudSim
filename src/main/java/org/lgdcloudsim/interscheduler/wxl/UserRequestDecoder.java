@@ -14,7 +14,9 @@ import java.util.Map;
  */
 public class UserRequestDecoder {
 
-    public static List<UserRequestDTO> toDTO(List<InstanceGroup> instanceGroups){
+    public static UserRequestDecodeResult toDTO(List<InstanceGroup> instanceGroups){
+        UserRequestDecodeResult result;
+
         Map<UserRequest, List<InstanceGroup>> map=new HashMap<>();
         for (InstanceGroup instanceGroup :
                 instanceGroups) {
@@ -24,14 +26,16 @@ public class UserRequestDecoder {
             }
             map.get(userRequest).add(instanceGroup);
         }
+        List<UserRequest> userRequestList = new ArrayList<>();
         List<UserRequestDTO> userRequestDTOList=new ArrayList<>();
         for (UserRequest userRequest :
                 map.keySet()) {
+            userRequestList.add(userRequest);
             List<InstanceGroup> instanceGroups1=map.get(userRequest);
             userRequestDTOList.add(new UserRequestDTO(userRequest, instanceGroups1));
         }
 //        System.out.println(userRequestDTOList);
-        return userRequestDTOList;
+        return new UserRequestDecodeResult(userRequestList, userRequestDTOList);
     }
 
 }

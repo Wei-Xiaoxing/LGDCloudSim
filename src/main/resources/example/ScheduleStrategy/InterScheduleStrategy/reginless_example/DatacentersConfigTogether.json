@@ -2,6 +2,41 @@
   "collaborations": [
     {
       "id": 1,
+      "interLoadBalancer": {
+        "type": "round"
+      },
+      "centerSchedulers": {
+        "type": "wxl",
+        "target": "dc",
+        "isSupportForward": false,
+        "dcStateSynInfo": [
+          {
+            "dcId": 1,
+            "synInterval": 0,
+            "synStateType": "easySimple"
+          },
+          {
+            "dcId": 2,
+            "synInterval": 0,
+            "synStateType": "easySimple"
+          },
+          {
+            "dcId": 3,
+            "synInterval": 0,
+            "synStateType": "easySimple"
+          },
+          {
+            "dcId": 4,
+            "synInterval": 0,
+            "synStateType": "easySimple"
+          },
+          {
+            "dcId": 5,
+            "synInterval": 0,
+            "synStateType": "easySimple"
+          }
+        ]
+      },
       "datacenters": [
         {
           "id": 1,
@@ -9,39 +44,6 @@
           "region": "us-east1",
           "interLoadBalancer": {
             "type": "round"
-          },
-          "interSchedulers": {
-            "type": "wxl",
-            "target": "dc",
-            "enablePipeline": false,
-            "isSupportForward": false,
-            "dcStateSynInfo": [
-              {
-                "dcId": 1,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 2,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 3,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 4,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 5,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              }
-            ]
           },
           "hostNum": 1,
           "partitions": [
@@ -93,39 +95,6 @@
           "interLoadBalancer": {
             "type": "round"
           },
-          "interSchedulers": {
-            "type": "wxl",
-            "target": "dc",
-            "enablePipeline": false,
-            "isSupportForward": false,
-            "dcStateSynInfo": [
-              {
-                "dcId": 1,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 2,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 3,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 4,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 5,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              }
-            ]
-          },
           "hostNum": 1,
           "partitions": [
             {
@@ -175,39 +144,6 @@
           "region": "asia-northeast1",
           "interLoadBalancer": {
             "type": "round"
-          },
-          "interSchedulers": {
-            "type": "wxl",
-            "target": "dc",
-            "enablePipeline": false,
-            "isSupportForward": false,
-            "dcStateSynInfo": [
-              {
-                "dcId": 1,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 2,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 3,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 4,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 5,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              }
-            ]
           },
           "hostNum": 1,
           "partitions": [
@@ -259,39 +195,6 @@
           "interLoadBalancer": {
             "type": "round"
           },
-          "interSchedulers": {
-            "type": "wxl",
-            "target": "dc",
-            "enablePipeline": false,
-            "isSupportForward": false,
-            "dcStateSynInfo": [
-              {
-                "dcId": 1,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 2,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 3,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 4,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 5,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              }
-            ]
-          },
           "hostNum": 1,
           "partitions": [
             {
@@ -341,39 +244,6 @@
           "region": "asia-northeast3",
           "interLoadBalancer": {
             "type": "round"
-          },
-          "interSchedulers": {
-            "type": "wxl",
-            "target": "dc",
-            "enablePipeline": false,
-            "isSupportForward": false,
-            "dcStateSynInfo": [
-              {
-                "dcId": 1,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 2,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 3,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 4,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              },
-              {
-                "dcId": 5,
-                "synInterval": 0,
-                "synStateType": "easySimple"
-              }
-            ]
           },
           "hostNum": 1,
           "partitions": [

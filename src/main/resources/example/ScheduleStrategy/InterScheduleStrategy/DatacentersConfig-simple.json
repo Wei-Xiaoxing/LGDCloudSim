@@ -6,7 +6,7 @@
         "type": "round"
       },
       "centerSchedulers": {
-        "type": "simple",
+        "type": "wxl",
         "target": "dc",
         "isSupportForward": false,
         "dcStateSynInfo": [

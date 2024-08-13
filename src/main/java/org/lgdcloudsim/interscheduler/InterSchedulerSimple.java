@@ -10,6 +10,7 @@ import org.lgdcloudsim.queue.InstanceGroupQueue;
 import org.lgdcloudsim.queue.InstanceGroupQueueFifo;
 import org.lgdcloudsim.request.Instance;
 import org.lgdcloudsim.request.InstanceGroup;
+import org.lgdcloudsim.request.InstanceGroupGraph;
 import org.lgdcloudsim.request.UserRequest;
 import org.lgdcloudsim.statemanager.DetailedDcStateSimple;
 import org.lgdcloudsim.statemanager.HostState;
@@ -387,7 +388,49 @@ public class InterSchedulerSimple implements InterScheduler {
             }
         }
 
-        return interSchedulerResult;
+        NetworkTopology networkTopology = simulation.getNetworkTopology();
+        System.out.println("run!");
+
+        InterSchedulerResult interSchedulerResult2 = new InterSchedulerResult(this, allDatacenters);
+        for (InstanceGroup instanceGroup: instanceGroups) {
+
+            Datacenter datacenter1 = interSchedulerResult.getScheduledDatacenter(instanceGroup);
+            if (datacenter1.getId() == -1){
+                interSchedulerResult2.addFailedInstanceGroup(instanceGroup);
+                instanceGroup.setState(UserRequest.FAILED);
+                instanceGroup.getUserRequest().setState(UserRequest.FAILED);
+                System.out.println("fail 1");
+                continue;
+            }
+            UserRequest userRequest = instanceGroup.getUserRequest();
+            InstanceGroupGraph instanceGroupGraph = userRequest.getInstanceGroupGraph();
+            List<InstanceGroup> instanceGroups1=userRequest.getInstanceGroups();
+            boolean fail = false;
+            for (InstanceGroup instanceGroup1: instanceGroups1) {
+                Datacenter datacenter2 = interSchedulerResult.getScheduledDatacenter(instanceGroup1);
+                if (datacenter2.getId() == -1) {
+                    interSchedulerResult2.addFailedInstanceGroup(instanceGroup);
+                    System.out.println("fail 2");
+                    fail = true;
+                    break;
+                }
+                if (instanceGroupGraph.getDelay(instanceGroup, instanceGroup1) < networkTopology.getDelay(datacenter1, datacenter2) ||
+                    instanceGroupGraph.getBw(instanceGroup, instanceGroup1) > networkTopology.getBw(datacenter1, datacenter2)) {
+                    interSchedulerResult2.addFailedInstanceGroup(instanceGroup);
+                    System.out.println("fail 3");
+                    fail = true;
+                    break;
+                }
+            }
+            if (!fail) {
+                interSchedulerResult2.addDcResult(instanceGroup, interSchedulerResult.getScheduledDatacenter(instanceGroup));
+            } else {
+//                instanceGroup.setState(UserRequest.FAILED);
+//                userRequest.setState(UserRequest.FAILED);
+            }
+        }
+
+        return interSchedulerResult2;
     }
 
     /**

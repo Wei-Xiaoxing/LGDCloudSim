@@ -442,6 +442,7 @@ public class InitDatacenter {
         StatesManager statesManager = getStatesManager(datacenterJson, isNeedIntraScheduler);
         datacenter.setStatesManager(statesManager);
 
+        JsonObject interSchedulerJson = datacenterJson.getJsonObject("interScheduler");
         if (isCenterSchedule) {
             datacenter.setCentralizedInterScheduleFlag(true);
         }

@@ -1,6 +1,7 @@
 package org.lgdcloudsim.interscheduler.wxl;
 
 import lombok.Data;
+import org.lgdcloudsim.request.Instance;
 import org.lgdcloudsim.request.InstanceGroup;
 
 /**
@@ -16,6 +17,8 @@ public class InstanceGroupDTO {
 
     private long sto;
 
+    private double accessDelay;
+
     private long time;
 
     public InstanceGroupDTO(){}
@@ -23,5 +26,12 @@ public class InstanceGroupDTO {
         this.setId(instanceGroup.getId());
         this.setCpu(instanceGroup.getCpuSum());
         this.setSto(instanceGroup.getStorageSum());
+        this.setAccessDelay(instanceGroup.getAccessLatency());
+        long time = 0;
+        for (Instance instance: instanceGroup.getInstances()) {
+            time += instance.getLifecycle();
+        }
+        time /= instanceGroup.getInstances().size();
+        this.setTime(time);
     }
 }

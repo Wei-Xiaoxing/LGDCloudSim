@@ -20,6 +20,8 @@ public class UserRequestDTO {
 
     private List<InstanceGroupDTO> instanceGroupList;
 
+    private List<AccessLatencyDTO> accessLatencyList;
+
     private List<InstanceGroupArcLimitDTO> delayLimitList;
 
     private List<InstanceGroupArcLimitDTO> bandwidthLimitList;

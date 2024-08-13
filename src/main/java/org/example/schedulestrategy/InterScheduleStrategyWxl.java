@@ -35,6 +35,8 @@ public class InterScheduleStrategyWxl {
     //The "types" field of centerScheduler in different files are different,
     // and the scheduling algorithms called are also different.
 //    private static final String DATACENTER_CONFIG_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/wxl/DatacentersConfig-" + scheduleStrategy + ".json";
+//    private static final String DATACENTER_CONFIG_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/reginless_example/DatacentersConfigSimple.json";
+//    private static final String DATACENTER_CONFIG_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/reginless_example/DatacentersConfigTogether.json";
     private static final String DATACENTER_CONFIG_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/reginless_example/DatacentersConfig.json";
 //    private static final String USER_REQUEST_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/wxl/generateRequestParameter.csv";
     private static final String USER_REQUEST_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/reginless_example/generateRequestParameter.csv";
@@ -45,18 +47,24 @@ public class InterScheduleStrategyWxl {
     private final Simulation lgdcloudsim;
     private final Factory factory;
 
+    private static final String  DBNAME = "LGDCloudSim.db";
+
     public static void main(String[] args) {
         new InterScheduleStrategyWxl();
     }
 
     private InterScheduleStrategyWxl() {
+        double start =System.currentTimeMillis();
         Log.setLevel(Level.INFO);
         lgdcloudsim = new CloudSim();
         factory = new FactorySimple();
 
+        lgdcloudsim.setDbName(DBNAME);
+        lgdcloudsim.setSqlRecord(factory.getSqlRecord("detailscheduletime", DBNAME));
         initUser();
         initDatacenters();
         initNetwork();
+        double endInit=System.currentTimeMillis();
 
         List<DatacenterDTO> datacenterDTOList=new ArrayList<>();
         for(Datacenter datacenter: lgdcloudsim.getCollaborationManager().getDatacenters(1)){

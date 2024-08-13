@@ -28,14 +28,23 @@ public class InterScheduleStrategy {
 
     //The "types" field of centerScheduler in different files are different,
     // and the scheduling algorithms called are also different.
-    private static final String DATACENTER_CONFIG_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/DatacentersConfig-" + scheduleStrategy + ".json";
-    private static final String USER_REQUEST_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/generateRequestParameter.csv";
-    private static final String DATACENTER_BW_FILE = "./src/main/resources/DatacenterBwConfig.csv";
+//    private static final String DATACENTER_CONFIG_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/DatacentersConfig-" + scheduleStrategy + ".json";
+//    private static final String USER_REQUEST_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/generateRequestParameter.csv";
+//    private static final String DATACENTER_BW_FILE = "./src/main/resources/DatacenterBwConfig.csv";
+//    private static final String REGION_DELAY_FILE = "./src/main/resources/regionDelay.csv";
+//    private static final String AREA_DELAY_FILE = "./src/main/resources/areaDelay.csv";
+    private static final String DATACENTER_CONFIG_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/reginless_example/DatacentersConfigSimple.json";
+    private static final String USER_REQUEST_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/reginless_example/generateRequestParameter.csv";
+    private static final String DATACENTER_BW_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/reginless_example/DatacenterBwConfig.csv";
     private static final String REGION_DELAY_FILE = "./src/main/resources/regionDelay.csv";
-    private static final String AREA_DELAY_FILE = "./src/main/resources/areaDelay.csv";
+    private static final String AREA_DELAY_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/reginless_example/areaDelay.csv";
+
 
     private final Simulation lgdcloudsim;
     private final Factory factory;
+
+    private static final String  DBNAME = "LGDCloudSim.db";
+
 
     public static void main(String[] args) {
         new InterScheduleStrategy();
@@ -46,6 +55,8 @@ public class InterScheduleStrategy {
         lgdcloudsim = new CloudSim();
         factory = new FactorySimple();
 
+        lgdcloudsim.setDbName(DBNAME);
+        lgdcloudsim.setSqlRecord(factory.getSqlRecord("detailscheduletime", DBNAME));
         initUser();
         initDatacenters();
         initNetwork();
