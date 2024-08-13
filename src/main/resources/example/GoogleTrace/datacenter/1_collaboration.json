@@ -2,10 +2,7 @@
   "collaborations": [
     {
       "id": 0,
-      "interLoadBalancer": {
-        "type": "round"
-      },
-      "centerSchedulers": {
+      "centerScheduler": {
         "type": "leastRequested",
         "target": "dc",
         "isSupportForward": false,
@@ -171,7 +168,7 @@
               "type": "leastRequested"
             }
           ],
-          "intraLoadBalancer": {
+          "loadBalancer": {
             "type": "batch"
           },
           "resourceAllocateSelector": {
@@ -282,7 +279,7 @@
               "type": "simple"
             }
           ],
-          "intraLoadBalancer": {
+          "loadBalancer": {
             "type": "batch"
           },
           "resourceAllocateSelector": {
@@ -407,7 +404,7 @@
               "type": "simple"
             }
           ],
-          "intraLoadBalancer": {
+          "loadBalancer": {
             "type": "batch"
           },
           "resourceAllocateSelector": {
@@ -518,7 +515,7 @@
               "type": "simple"
             }
           ],
-          "intraLoadBalancer": {
+          "loadBalancer": {
             "type": "batch"
           },
           "resourceAllocateSelector": {
@@ -643,7 +640,7 @@
               "type": "simple"
             }
           ],
-          "intraLoadBalancer": {
+          "loadBalancer": {
             "type": "batch"
           },
           "resourceAllocateSelector": {
@@ -754,7 +751,7 @@
               "type": "simple"
             }
           ],
-          "intraLoadBalancer": {
+          "loadBalancer": {
             "type": "batch"
           },
           "resourceAllocateSelector": {
@@ -900,7 +897,7 @@
               "type": "simple"
             }
           ],
-          "intraLoadBalancer": {
+          "loadBalancer": {
             "type": "batch"
           },
           "resourceAllocateSelector": {
@@ -1015,7 +1012,7 @@
               "type": "simple"
             }
           ],
-          "intraLoadBalancer": {
+          "loadBalancer": {
             "type": "batch"
           },
           "resourceAllocateSelector": {

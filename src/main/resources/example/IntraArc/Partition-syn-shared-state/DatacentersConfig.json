@@ -157,7 +157,7 @@
       "type": "randomScoreByPartitionSynOrder"
     }
   ],
-  "intraLoadBalancer": {
+  "loadBalancer": {
     "type": "batch"
   },
   "resourceAllocateSelector": {

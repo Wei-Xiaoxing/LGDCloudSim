@@ -57,9 +57,6 @@ public class InstanceGroupSimple implements InstanceGroup {
 
     double finishTime;
 
-    @Getter
-    double interScheduleEndTime;
-
     int successInstanceNum;
 
     List<Integer> forwardDatacenterIdsHistory;
@@ -175,11 +172,5 @@ public class InstanceGroupSimple implements InstanceGroup {
     public String toString() {
         return "InstanceGroupSimple [id=" + id
                 + ", instanceList=" + instances + "]";
-    }
-
-    @Override
-    public InstanceGroup setInterScheduleEndTime(double interScheduleEndTime) {
-        this.interScheduleEndTime = interScheduleEndTime;
-        return this;
     }
 }

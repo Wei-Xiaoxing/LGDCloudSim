@@ -212,7 +212,7 @@ public interface DatacenterPrice {
      *
      * @param bwBillingType the billing type of bandwidth
      * @return the datacenter
-     * @see org.lgdcloudsim.datacenter.DatacenterSimple#calculateInstanceBwCost(Instance)
+     * @see DatacenterSimple#calculateInstanceBwCost(Instance)
      */
     DatacenterPrice setBwBillingType(String bwBillingType);
 

@@ -23,7 +23,7 @@
       "type": "FirstFit"
     }
   ],
-  "intraLoadBalancer": {
+  "loadBalancer": {
     "type": "batch"
   },
   "resourceAllocateSelector": {

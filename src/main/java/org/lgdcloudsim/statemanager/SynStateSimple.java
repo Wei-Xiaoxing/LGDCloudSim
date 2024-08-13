@@ -270,7 +270,7 @@ public class SynStateSimple implements SynState {
             }
             tmpCount++;
         }
-        if (hostStateHistories.isEmpty()) {
+        if (hostStateHistories.size() == 0) {
             return null;
         } else {
             int[] predictHostState = predictionManager.predictHostState(hostStateHistories);

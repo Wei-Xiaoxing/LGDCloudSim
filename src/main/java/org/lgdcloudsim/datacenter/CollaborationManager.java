@@ -1,9 +1,7 @@
 package org.lgdcloudsim.datacenter;
 
 import org.lgdcloudsim.interscheduler.InterScheduler;
-import org.lgdcloudsim.loadbalancer.LoadBalancer;
 import org.lgdcloudsim.queue.InstanceGroupQueue;
-import org.lgdcloudsim.request.InstanceGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,35 +123,19 @@ public interface CollaborationManager {
     CollaborationManager changeCollaboration();
 
     /**
-     * Get the instance group queue of the collaboration with the given collaboration id.
+     * Add the center scheduler to the collaboration with the given collaboration id.
      *
-     * @param collaborationId the id of the collaboration
-     * @return the instance group queue of the collaboration with the given collaboration id
-     */
-    InstanceGroupQueue getInstanceGroupQueue(int collaborationId);
-
-    /**
-     * Add the load balancer to the collaboration with the given collaboration id.
-     *
-     * @param loadBalancer the load balancer to be added to the collaboration
+     * @param centerScheduler the center scheduler to be added to the collaboration
      * @return the collaboration manager
      */
-    CollaborationManager addInterLoadBalancer(int collaborationId, LoadBalancer<InstanceGroup, InterScheduler> loadBalancer);
+    CollaborationManager addCenterScheduler(InterScheduler centerScheduler);
 
     /**
-     * Get the load balancer with the given collaboration id.
+     * Get the center scheduler with the given collaboration id.
      *
-     * @return the load balancer with the given collaboration id
+     * @return the center scheduler with the given collaboration id
      */
-    LoadBalancer<InstanceGroup, InterScheduler> getLoadBalancer(int collaborationId);
-
-    /**
-     * Add center schedulers to the collaboration with the given collaboration id.
-     *
-     * @param centerSchedulers the center schedulers to be added to the collaboration
-     * @return the collaboration manager
-     */
-    CollaborationManager addCenterSchedulers(int collaborationId, List<InterScheduler> centerSchedulers);
+    Map<Integer, InstanceGroupQueue> getCollaborationGroupQueueMap();
 
     /**
      * Get the map of the collaboration id and the center scheduler.
@@ -161,15 +143,7 @@ public interface CollaborationManager {
      *
      * @return the map of the collaboration id and the center scheduler
      */
-    Map<Integer, List<InterScheduler>> getCollaborationCenterSchedulersMap();
-
-    /**
-     * Get the center schedulers of the collaboration with the given collaboration id.
-     *
-     * @param collaborationId the id of the collaboration
-     * @return the center schedulers of the collaboration with the given collaboration id
-     */
-    List<InterScheduler> getCenterSchedulers(int collaborationId);
+    Map<Integer, InterScheduler> getCollaborationCenterSchedulerMap();
 
     /**
      * Get the map of the collaboration id and the center scheduler busy status.
@@ -178,7 +152,7 @@ public interface CollaborationManager {
      *
      * @return the map of the collaboration id and the center scheduler busy status
      */
-    Map<Integer, Boolean> getCenterSchedulersBusyMap(int collaborationId);
+    Map<Integer, Boolean> getCenterSchedulerBusyMap();
 
     /**
      * Get the data center by the given data center id.

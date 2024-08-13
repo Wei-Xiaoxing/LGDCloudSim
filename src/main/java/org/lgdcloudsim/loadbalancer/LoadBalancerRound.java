@@ -3,8 +3,12 @@ package org.lgdcloudsim.loadbalancer;
 import lombok.Getter;
 import lombok.Setter;
 import org.lgdcloudsim.datacenter.Datacenter;
+import org.lgdcloudsim.request.Instance;
+import org.lgdcloudsim.intrascheduler.IntraScheduler;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A class to represent a load balancer.
@@ -14,7 +18,12 @@ import java.util.*;
  * @author Anonymous
  * @since LGDCloudSim 1.0
  */
-public class LoadBalancerRound<R, S> implements LoadBalancer<R, S> {
+public class LoadBalancerRound implements LoadBalancer {
+    /**
+     * the data center that the load balancer belongs to.
+     **/
+    @Getter
+    Datacenter datacenter;
 
     /**
      * the load balance cost time.
@@ -24,40 +33,46 @@ public class LoadBalancerRound<R, S> implements LoadBalancer<R, S> {
     double loadBalanceCostTime = 0.1;
 
     /**
-     * the last distributed id.
+     * the last inner scheduler id.
      **/
-    int lastDistributedId = 0;
+    int lastInnerSchedulerId = 0;
 
     /**
-     * Overrides the method to send instances to intra schedulers or send instanceGroups to inter-schedulers.
-     * The method divides all instances into fractions of the number of schedulers,
-     * and then distributes them to each scheduler.
+     * Overrides the method to send instances to intra schedulers.
+     * The method divides all instances into fractions of the number of intra-schedulers,
+     * and then distributes them to each intra-scheduler.
      *
-     * @param requests List of instances or instanceGroups to be sent.
-     * @param schedulers List of intra-schedulers or inter-schedulers to which instances are sent.
-     * @return The result of the distribution. The key is the intra-scheduler or inter-scheduler, and the value is the instance or instanceGroup to be sent.
+     * @param instances List of instances to be sent to intra schedulers.
+     * @return Set of intra schedulers to which instances were sent.
      */
     @Override
-    public Map<S, List<R>> loadBalance(List<R> requests, List<S> schedulers) {
-        Map<S, List<R>> resultMap = new HashMap<>();
-        int size = requests.size();
-        int onceSendSize = size / schedulers.size();
-        int remainder = size % schedulers.size();
+    public Set<IntraScheduler> sendInstances(List<Instance> instances) {
+        Set<IntraScheduler> sentIntraSchedulers = new HashSet<>();
+        int size = instances.size();
+        List<IntraScheduler> intraSchedulers = datacenter.getIntraSchedulers();
+        int onceSendSize = size / intraSchedulers.size();
+        int remainder = size % intraSchedulers.size();
 
         int start = 0;
         int end;
-        for (int i = 0; i < schedulers.size(); i++) {
-            S scheduler = schedulers.get((lastDistributedId + i) % schedulers.size());
+        for (int i = 0; i < intraSchedulers.size(); i++) {
+            IntraScheduler intraScheduler = intraSchedulers.get((lastInnerSchedulerId + i) % intraSchedulers.size());
             end = start + onceSendSize + (i < remainder ? 1 : 0);
-            if (end == start) { // no more requests need to be distributed
+            if (end == start) {
                 break;
             }
-
-            resultMap.put(scheduler, requests.subList(start, end));
+            intraScheduler.addInstance(instances.subList(start, end), false);
+            sentIntraSchedulers.add(intraScheduler);
             start = end;
         }
-        lastDistributedId = (lastDistributedId + 1) % schedulers.size();
 
-        return resultMap;
+        lastInnerSchedulerId = (lastInnerSchedulerId + 1) % datacenter.getIntraSchedulers().size();
+        LOGGER.info("{}: {}'s LoadBalancerRound send {} instances to {} intraScheduler,On average, each scheduler receives around {} instances", datacenter.getSimulation().clockStr(), datacenter.getName(), instances.size(), sentIntraSchedulers.size(), onceSendSize);
+        return sentIntraSchedulers;
+    }
+
+    @Override
+    public void setDatacenter(Datacenter datacenter) {
+        this.datacenter = datacenter;
     }
 }

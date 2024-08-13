@@ -2,10 +2,7 @@
   "collaborations": [
     {
       "id": 1,
-      "interLoadBalancer": {
-        "type": "round"
-      },
-      "centerSchedulers": {
+      "centerScheduler": {
         "type": "leastRequested",
         "target": "host",
         "dcStateSynInfo": [

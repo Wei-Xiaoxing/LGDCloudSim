@@ -410,7 +410,7 @@ public class StatesManagerSimple implements StatesManager {
     public StatesManager revertSelfHostState(List<Instance> instances, IntraScheduler intraScheduler) {
         Map<Integer, Map<Integer, int[]>> selfHostState = selfHostStateMap.get(intraScheduler);
         for (Instance instance : instances) {
-            if (instance.getRetryHostIds() == null || instance.getRetryHostIds().isEmpty()) {
+            if (instance.getRetryHostIds() == null || instance.getRetryHostIds().size() == 0) {
                 LOGGER.error("{}: instance {} has no retry host id in revertSelftHostState function", getDatacenter().getSimulation().clockStr(), instance.getId());
                 System.exit(-1);
             }
@@ -534,25 +534,5 @@ public class StatesManagerSimple implements StatesManager {
             partitionSynStateMap.put(0.0, new HashMap<>());
             synStateMap.put(partitionId, partitionSynStateMap);
         }
-    }
-
-    @Override
-    public long getTotalCPU() {
-        return hostCapacityManager.getCpuCapacitySum();
-    }
-
-    @Override
-    public long getTotalRAM() {
-        return hostCapacityManager.getRamCapacitySum();
-    }
-
-    @Override
-    public long getTotalStorage() {
-        return hostCapacityManager.getStorageCapacitySum();
-    }
-
-    @Override
-    public long getTotalBw() {
-        return hostCapacityManager.getBwCapacitySum();
     }
 }

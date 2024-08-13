@@ -2,10 +2,7 @@
   "collaborations": [
     {
       "id": 1,
-      "interLoadBalancer": {
-        "type": "round"
-      },
-      "centerSchedulers": {
+      "centerScheduler": {
         "type": "simple",
         "target": "dc",
         "isSupportForward": false,
@@ -58,7 +55,7 @@
               "type": "simple"
             }
           ],
-          "intraLoadBalancer": {
+          "loadBalancer": {
             "type": "batch"
           },
           "resourceAllocateSelector": {
@@ -90,7 +87,7 @@
               "type": "simple"
             }
           ],
-          "intraLoadBalancer": {
+          "loadBalancer": {
             "type": "batch"
           },
           "resourceAllocateSelector": {
@@ -101,10 +98,7 @@
     },
     {
       "id": 2,
-      "interLoadBalancer": {
-        "type": "round"
-      },
-      "centerSchedulers": {
+      "centerScheduler": {
         "type": "simple",
         "target": "dc",
         "isSupportForward": false,
@@ -157,7 +151,7 @@
               "type": "simple"
             }
           ],
-          "intraLoadBalancer": {
+          "loadBalancer": {
             "type": "batch"
           },
           "resourceAllocateSelector": {
@@ -189,7 +183,7 @@
               "type": "simple"
             }
           ],
-          "intraLoadBalancer": {
+          "loadBalancer": {
             "type": "batch"
           },
           "resourceAllocateSelector": {

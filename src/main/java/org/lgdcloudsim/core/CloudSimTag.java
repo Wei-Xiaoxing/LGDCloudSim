@@ -111,7 +111,7 @@ public class CloudSimTag {
      * After the instance group is sent to the data center,
      * the data center does not allow the instance group to be forwarded to other data centers.
      * So the datacenter will call intra-scheduler to schedule the instance group.
-     * The {@link org.lgdcloudsim.core.events.SimEvent#getData()} must be a list of {@link org.lgdcloudsim.request.InstanceGroup} object.
+     * The {@link org.lgdcloudsim.core.events.SimEvent#getData()} must be a list of {@link InstanceGroup} object.
      */
     public static final int SCHEDULE_TO_DC_NO_FORWARD = INTER_SCHEDULE_END + 1;
 
@@ -119,7 +119,7 @@ public class CloudSimTag {
      * Send the scheduling results of the {@link org.lgdcloudsim.interscheduler.InterScheduler} to the data center.
      * This type of scheduling not only clarifies which data center the instance group is scheduled to,
      * but also schedules the instances in the instance group at the host level.
-     * The {@link org.lgdcloudsim.core.events.SimEvent#getData()} must be a list of {@link org.lgdcloudsim.request.InstanceGroup} object.
+     * The {@link org.lgdcloudsim.core.events.SimEvent#getData()} must be a list of {@link InstanceGroup} object.
      */
     public static final int SCHEDULE_TO_DC_HOST = SCHEDULE_TO_DC_NO_FORWARD + 1;
 

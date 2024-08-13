@@ -39,11 +39,11 @@
               "type": "simple"
             }
           ],
-          "interSchedulers": {
+          "interScheduler": {
             "type": "simple",
             "isDirectSend": false
           },
-          "intraLoadBalancer": {
+          "loadBalancer": {
             "type": "round"
           },
           "resourceAllocateSelector": {

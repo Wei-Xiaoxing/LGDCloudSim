@@ -8,7 +8,6 @@ import org.lgdcloudsim.intrascheduler.IntraScheduler;
 import org.lgdcloudsim.interscheduler.InterScheduler;
 import org.lgdcloudsim.loadbalancer.LoadBalancer;
 import org.lgdcloudsim.queue.InstanceQueue;
-import org.lgdcloudsim.request.Instance;
 import org.lgdcloudsim.request.InstanceGroup;
 import org.lgdcloudsim.statemanager.StatesManager;
 
@@ -71,14 +70,10 @@ public class DatacenterNull implements Datacenter {
     }
 
     @Override
-    public Datacenter setInterLoadBalancer(LoadBalancer<InstanceGroup, InterScheduler> interLoadBalancer) {
+    public Datacenter setInterScheduler(InterScheduler interScheduler) {
         return null;
     }
 
-    @Override
-    public Datacenter setInterSchedulers(List<InterScheduler> interSchedulers) {
-        return null;
-    }
     @Override
     public Datacenter setIntraSchedulers(List<IntraScheduler> intraSchedulers) {
         return null;
@@ -90,7 +85,12 @@ public class DatacenterNull implements Datacenter {
     }
 
     @Override
-    public Datacenter setIntraLoadBalancer(LoadBalancer intraLoadBalancer) {
+    public Datacenter setLoadBalancer(LoadBalancer loadBalancer) {
+        return null;
+    }
+
+    @Override
+    public LoadBalancer getLoadBalancer() {
         return null;
     }
 
@@ -331,56 +331,6 @@ public class DatacenterNull implements Datacenter {
 
     @Override
     public double getBwUtilization() {
-        return 0;
-    }
-
-    @Override
-    public long getCpu() {
-        return 0;
-    }
-
-    @Override
-    public long getRam() {
-        return 0;
-    }
-
-    @Override
-    public long getStorage() {
-        return 0;
-    }
-
-    @Override
-    public long getBw() {
-        return 0;
-    }
-
-    @Override
-    public double getPricePerCPU() {
-        return 0;
-    }
-
-    @Override
-    public double getPricePerRAM() {
-        return 0;
-    }
-
-    @Override
-    public double getPricePerBW() {
-        return 0;
-    }
-
-    @Override
-    public double getPricePerRack() {
-        return 0;
-    }
-
-    @Override
-    public double getHostPerRack() {
-        return 0;
-    }
-
-    @Override
-    public long getHostNum() {
         return 0;
     }
 }

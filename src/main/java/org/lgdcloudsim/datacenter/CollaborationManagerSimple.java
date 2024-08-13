@@ -4,10 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.lgdcloudsim.core.Simulation;
 import org.lgdcloudsim.interscheduler.InterScheduler;
-import org.lgdcloudsim.loadbalancer.LoadBalancer;
 import org.lgdcloudsim.queue.InstanceGroupQueue;
 import org.lgdcloudsim.queue.InstanceGroupQueueFifo;
-import org.lgdcloudsim.request.InstanceGroup;
 
 import java.util.*;
 
@@ -35,44 +33,38 @@ public class CollaborationManagerSimple implements CollaborationManager {
     /**
      * The collaboration Map.
      */
-    private final Map<Integer, Set<Datacenter>> collaborationMap;
+    private Map<Integer, Set<Datacenter>> collaborationMap;
 
     /**
      * The datacenter id Map.
      */
-    private final Map<Integer, Datacenter> datacenterIdMap;
+    private Map<Integer, Datacenter> datacenterIdMap;
 
     /**
      * The Simulation.
      */
-    private final Simulation cloudSim;
+    private Simulation cloudSim;
 
     /**
      * The map of the collaboration id and the InstanceGroupQueue.
-     * The key is the collaboration id, and the value is the InstanceGroupQueue of the collaboration.
-     * All instanceGroups will be put into the InstanceGroupQueue and then be distributed to the queues of center InterSchedulers.
-     */
-    private final Map<Integer, InstanceGroupQueue> collaborationGroupQueueMap = new HashMap<>();
-
-    /**
-     * The map of the collaboration id and the LoadBalancer.
-     * The key is the collaboration id, and the value is the LoadBalancer of the collaboration.
-     * The LoadBalancer is used to distribute the instanceGroups to the center InterSchedulers.
-     */
-    private Map<Integer, LoadBalancer<InstanceGroup, InterScheduler>> loadBalancerMap = new HashMap<>();
-
-    /**
-     * The map of the collaboration id and the center InterSchedulers.
-     * The key is the collaboration id, and the value is the center InterSchedulers of the collaboration.
+     * The key is the collaboration id, and the value is the InstanceGroupQueue for the center scheduler of the collaboration with the collaboration id.
      */
     @Getter
-    private Map<Integer, List<InterScheduler>> collaborationCenterSchedulersMap = new HashMap<>();
+    private Map<Integer, InstanceGroupQueue> collaborationGroupQueueMap = new HashMap<>();
 
     /**
-     * The map of the collaboration id and the center schedulers busy status.
-     * The key is the collaboration id, and the key of the sub map is the center scheduler id, and the value is the busy status of the center scheduler.
+     * The map of the collaboration id and the center InterScheduler.
+     * The key is the collaboration id, and the value is the center InterScheduler of the collaboration with the collaboration id.
      */
-    private Map<Integer, Map<Integer, Boolean>> centerSchedulersBusyMap = new HashMap<>();
+    @Getter
+    private Map<Integer, InterScheduler> collaborationCenterSchedulerMap = new HashMap<>();
+
+    /**
+     * The map of the collaboration id and the center scheduler busy status.
+     * The key is the collaboration id, and the value is the center scheduler busy status of the collaboration with the collaboration id.
+     */
+    @Getter
+    private Map<Integer, Boolean> centerSchedulerBusyMap = new HashMap<>();
 
     /**
      * Construct a new CollaborationManagerSimple with the given simulation.
@@ -84,13 +76,14 @@ public class CollaborationManagerSimple implements CollaborationManager {
         simulation.setCollaborationManager(this);
     }
 
-    /**
-     * Construct a new CollaborationManagerSimple with the given datacenter and collaboration id.
-     */
     @Override
     public CollaborationManager addDatacenter(Datacenter datacenter, int collaborationId) {
         datacenterIdMap.put(datacenter.getId(), datacenter);
-        Set<Datacenter> datacenters = collaborationMap.computeIfAbsent(collaborationId, k -> new HashSet<>());
+        Set<Datacenter> datacenters = collaborationMap.get(collaborationId);
+        if (datacenters == null) {
+            datacenters = new HashSet<>();
+            collaborationMap.put(collaborationId, datacenters);
+        }
         datacenters.add(datacenter);
         datacenterAddCollaborationId(datacenter, collaborationId);
         return this;
@@ -273,54 +266,13 @@ public class CollaborationManagerSimple implements CollaborationManager {
         return this;
     }
 
-    /**
-     * Get the InstanceGroupQueue of the collaboration with the given collaboration id.
-     *
-     * @param collaborationId the id of the collaboration zone
-     * @return the InstanceGroupQueue of the collaboration with the given collaboration id
-     */
     @Override
-    public InstanceGroupQueue getInstanceGroupQueue(int collaborationId) {
-        return collaborationGroupQueueMap.get(collaborationId);
-    }
-
-    @Override
-    public CollaborationManager addInterLoadBalancer(int collaborationId, LoadBalancer<InstanceGroup, InterScheduler> loadBalancer) {
-        this.loadBalancerMap.put(collaborationId, loadBalancer);
-        return this;
-    }
-
-    /**
-     * Get the LoadBalancer of the collaboration with the given collaboration id.
-     *
-     * @param collaborationId the id of the collaboration
-     * @return the LoadBalancer of the collaboration with the given collaboration id
-     */
-    @Override
-    public LoadBalancer<InstanceGroup, InterScheduler> getLoadBalancer(int collaborationId) {
-        return loadBalancerMap.get(collaborationId);
-    }
-
-    @Override
-    public CollaborationManager addCenterSchedulers(int collaborationId, List<InterScheduler> centerSchedulers) {
+    public CollaborationManager addCenterScheduler(InterScheduler centerScheduler) {
+        int collaborationId = centerScheduler.getCollaborationId();
         collaborationGroupQueueMap.put(collaborationId, new InstanceGroupQueueFifo());
-
-        collaborationCenterSchedulersMap.put(collaborationId, centerSchedulers);
-        centerSchedulersBusyMap.put(collaborationId, new HashMap<>());
-        for (InterScheduler centerScheduler : centerSchedulers) {
-            centerSchedulersBusyMap.get(collaborationId).put(centerScheduler.getId(), false);
-        }
+        collaborationCenterSchedulerMap.put(collaborationId, centerScheduler);
+        centerSchedulerBusyMap.put(collaborationId, false);
         return this;
-    }
-
-    @Override
-    public List<InterScheduler> getCenterSchedulers(int collaborationId) {
-        return collaborationCenterSchedulersMap.get(collaborationId);
-    }
-
-    @Override
-    public Map<Integer, Boolean> getCenterSchedulersBusyMap(int collaborationId) {
-        return centerSchedulersBusyMap.get(collaborationId);
     }
 
     @Override
