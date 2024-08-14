@@ -11,7 +11,7 @@ import java.util.stream.Stream;
  * An {@link EventQueue} that orders {@link SimEvent}s based on their time attribute.
  * Since a new event's time is usually equal or higher than the previous event
  * in regular simulations, this classes uses a {@link LinkedList} instead
- * of a {@link java.util.SortedSet} such as {@link java.util.TreeSet}
+ * of a {@link SortedSet} such as {@link TreeSet}
  * because the {@link LinkedList} provides constant O(1) complexity
  * to add elements to the end.
  *
@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 public class DeferredQueue implements EventQueue {
     /**
      * Despite the events are sorted by time and there are
-     * sorted collections such as {@link java.util.SortedSet},
+     * sorted collections such as {@link SortedSet},
      * since the time of a new event is usually higher than the previous
      * one, in such a case, the {@link LinkedList#add(Object)} provides
      * better performance, which is O(1).

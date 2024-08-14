@@ -1,5 +1,5 @@
   Parament Name,Parament
-DcDistribution,"{""1"":{""United States"":1},""2"":{""United States"":1}}"
+DcDistribution,"{""1"":{""United States"":1}}"
 RequestPerNum,10
 RequestTimeInterval,100
 RequestTimes,10

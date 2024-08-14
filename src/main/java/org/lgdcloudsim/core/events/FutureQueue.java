@@ -17,13 +17,13 @@ import java.util.stream.Stream;
 /**
  * An {@link EventQueue} that stores future simulation events.
  * It uses a {@link TreeSet} in order ensure the events
- * are stored ordered. Using a {@link java.util.LinkedList}
+ * are stored ordered. Using a {@link LinkedList}
  * as defined by {@link DeferredQueue} to improve performance
  * doesn't work for this queue.
  *
  * @author Marcos Dias de Assuncao
  * @author Manoel Campos da Silva Filho
- * @see java.util.TreeSet
+ * @see TreeSet
  * @since CloudSim Toolkit 1.0
  */
 public class FutureQueue implements EventQueue {
