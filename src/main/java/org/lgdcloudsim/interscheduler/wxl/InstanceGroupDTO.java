@@ -17,7 +17,7 @@ public class InstanceGroupDTO {
 
     private long sto;
 
-    private double accessDelay;
+    private double accessLatency;
 
     private long time;
 
@@ -26,7 +26,7 @@ public class InstanceGroupDTO {
         this.setId(instanceGroup.getId());
         this.setCpu(instanceGroup.getCpuSum());
         this.setSto(instanceGroup.getStorageSum());
-        this.setAccessDelay(instanceGroup.getAccessLatency());
+        this.setAccessLatency(instanceGroup.getAccessLatency());
         long time = 0;
         for (Instance instance: instanceGroup.getInstances()) {
             time += instance.getLifecycle();
