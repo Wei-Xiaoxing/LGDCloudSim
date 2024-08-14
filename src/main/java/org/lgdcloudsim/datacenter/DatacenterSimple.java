@@ -356,7 +356,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
         LOGGER.info("{}: {} is starting...", getSimulation().clockStr(), getName());
         sendWithoutNetwork(getSimulation().getCis(), 0, CloudSimTag.DC_REGISTRATION_REQUEST, this);
         if (statesManager.isSynCostTime()) {
-            send(this, statesManager.getNextPartitionSynDelay(), CloudSimTag.SYN_STATE_IN_DC, null);
+            send(this, statesManager.getNextPartitionSynDelay(), CloudSimTag.SYN_STATE_BETWEEN_CENTER_AND_INTRA_SCHEDULER_IN_DC, null);
         }
 
         if (interScheduler != null) {
@@ -387,7 +387,9 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
     @Override
     public void processEvent(SimEvent evt) {
         switch (evt.getTag()) {
-            case CloudSimTag.SYN_STATE_IN_DC -> processSynStateInDc();
+            case CloudSimTag.SYN_STATE_BY_HEARTBEAT_IN_DC -> processSynStateByHeartbeatInDc(evt);
+            case CloudSimTag.SYN_STATE_BETWEEN_CENTER_AND_INTRA_SCHEDULER_IN_DC ->
+                    processSynStateBetweenCenterAndIntraSchedulerInDc();
             case CloudSimTag.SYN_STATE_BETWEEN_DC -> processSynStateBetweenDc(evt);
             case CloudSimTag.USER_REQUEST_SEND -> processUserRequestsSend(evt);
             case CloudSimTag.INTER_SCHEDULE_BEGIN -> processInterScheduleBegin();
@@ -423,14 +425,24 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
         }
     }
 
+    private void processSynStateByHeartbeatInDc(SimEvent evt) {
+        //TODO 真的需要List吗
+        if (evt.getData() instanceof List<?> updatedHostIds) {
+            if (!updatedHostIds.isEmpty() && updatedHostIds.get(0) instanceof Integer) {
+                statesManager.synByHeartbeat((List<Integer>) updatedHostIds);
+//                LOGGER.info("{}: {} syn state by heartbeat, updated hosts are {}", getSimulation().clockStr(), getName(), updatedHostIds);
+            }
+        }
+    }
+
     /**
-     * Calling {@link StatesManager#synAllState()} to synchronize the state of the datacenter.
-     * And send a {@link CloudSimTag#SYN_STATE_IN_DC} event to itself after smallSynGap.
+     * Calling {@link StatesManager#synAllStateBetweenCenterAndIntraScheduler()} to synchronize the state of the datacenter.
+     * And send a {@link CloudSimTag#SYN_STATE_BETWEEN_CENTER_AND_INTRA_SCHEDULER_IN_DC} event to itself after smallSynGap.
      */
-    private void processSynStateInDc() {
-        statesManager.synAllState();
+    private void processSynStateBetweenCenterAndIntraSchedulerInDc() {
+        statesManager.synAllStateBetweenCenterAndIntraScheduler();
         if (statesManager.isSynCostTime()) {
-            send(this, statesManager.getNextPartitionSynDelay(), CloudSimTag.SYN_STATE_IN_DC, null);
+            send(this, statesManager.getNextPartitionSynDelay(), CloudSimTag.SYN_STATE_BETWEEN_CENTER_AND_INTRA_SCHEDULER_IN_DC, null);
         }
 
         if (Objects.equals(this.architecture, "two-level")) {
@@ -452,6 +464,10 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
                     finishInstance(instance);
                 }
                 getSimulation().getSqlRecord().recordInstancesFinishInfo((List<Instance>) list);
+
+                if (statesManager.isNeedHeartbeat()) {
+                    sendHeartbeat((List<Instance>) list);
+                }
             }
         }
     }
@@ -471,8 +487,31 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
         }
         instance.setFinishTime(getSimulation().clock());
         statesManager.release(hostId, instance);
+
+        if (statesManager.isNeedHeartbeat()) {
+            sendWithoutNetwork(this, statesManager.getNextHeartbeatDelay(hostId, getSimulation().clock()), CloudSimTag.SYN_STATE_BY_HEARTBEAT_IN_DC, List.of(hostId));
+        }
+
         calculateCost(instance);
         updateGroupAndUserRequestState(instance);
+    }
+
+    /**
+     * Send the heartbeat to update the state of the host in center state manager
+     *
+     * @param instances the finished instances
+     */
+    private void sendHeartbeat(List<Instance> instances) {
+        Map<Double, Set<Integer>> instanceHeartbeatdelayMap = new HashMap<>();
+        for (Instance instance : instances) {
+            double delay = statesManager.getNextHeartbeatDelay(instance.getHost(), getSimulation().clock());
+            instanceHeartbeatdelayMap.putIfAbsent(delay, new HashSet<>());
+            instanceHeartbeatdelayMap.get(delay).add(instance.getHost());
+        }
+
+        for (Map.Entry<Double, Set<Integer>> entry : instanceHeartbeatdelayMap.entrySet()) {
+            sendWithoutNetwork(this, entry.getKey(), CloudSimTag.SYN_STATE_BY_HEARTBEAT_IN_DC, new ArrayList<Integer>(entry.getValue()));
+        }
     }
 
     /**
@@ -621,7 +660,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
      * @return the failed instances
      */
     private Map<IntraScheduler, List<Instance>> allocateResource(Map<IntraScheduler, List<Instance>> allocatedResult) {
-        LOGGER.info("{}: {} is allocate resource.", getSimulation().clockStr(), getName());
+        LOGGER.info("{}: {} is allocating resource.", getSimulation().clockStr(), getName());
         Map<Integer, List<Instance>> successAllocatedInstances = new HashMap<>();
         Map<IntraScheduler, List<Instance>> failedInstances = new HashMap<>();
 
@@ -690,12 +729,16 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
                 statesManager.revertHostState(intraSchedulerResult);
             }
 
+            int retryNum=0;
             if (!intraSchedulerResult.isFailedInstancesEmpty()) {
-                intraScheduleFailed(intraSchedulerResult.getFailedInstances(), intraScheduler, false, intraSchedulerResult.getOutDatedUserRequests());
+                retryNum = intraScheduleFailed(intraSchedulerResult.getFailedInstances(), intraScheduler, false, intraSchedulerResult.getOutDatedUserRequests());
             }
-            intraSchedulerResults.add(intraSchedulerResult);
             if (!intraSchedulerResult.isScheduledInstancesEmpty()) {
+                intraSchedulerResults.add(intraSchedulerResult);
                 send(this, 0, CloudSimTag.PRE_ALLOCATE_RESOURCE, null);
+            } else if (retryNum != 0){
+                LOGGER.info("{}: {}'s {} has {} instances need retry but no instance scheduled successful.", getSimulation().clockStr(), getName(), intraScheduler.getName(), retryNum);
+                startIntraScheduling(intraScheduler);
             } else {
                 isIntraSchedulerBusy.put(intraScheduler, false);
             }
@@ -754,8 +797,9 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
      * @param intraScheduler the scheduler corresponding to this scheduling result
      * @param isNeedRevertSelfHostState whether to revert the state of the host
      * @param outDatedUserRequests the outdated user requests that has exceeded the scheduling time limit
+     * @return the number of retry instances
      */
-    private void intraScheduleFailed(List<Instance> instances, IntraScheduler intraScheduler, boolean isNeedRevertSelfHostState, Set<UserRequest> outDatedUserRequests) {
+    private int intraScheduleFailed(List<Instance> instances, IntraScheduler intraScheduler, boolean isNeedRevertSelfHostState, Set<UserRequest> outDatedUserRequests) {
         Set<UserRequest> failedUserRequests = outDatedUserRequests;
         for (UserRequest userRequest : outDatedUserRequests) {
             userRequest.addFailReason("outDated");
@@ -790,6 +834,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
         if (failedUserRequests.size() > 0) {
             send(getSimulation().getCis(), 0, CloudSimTag.USER_REQUEST_FAIL, failedUserRequests);
         }
+        return instances.size();
     }
 
     /**
@@ -804,9 +849,16 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
             if (instanceQueue.size() > 0) {
                 send(this, loadBalancer.getLoadBalanceCostTime(), CloudSimTag.LOAD_BALANCE_SEND, null);
             }
-            for (IntraScheduler intraScheduler : sentIntraScheduler) {
-                if (!isIntraSchedulerBusy.containsKey(intraScheduler) || !isIntraSchedulerBusy.get(intraScheduler)) {
-                    send(this, loadBalancer.getLoadBalanceCostTime(), CloudSimTag.INTRA_SCHEDULE_BEGIN, intraScheduler);
+
+            for (Map.Entry<IntraScheduler, List<Instance>> entry : loadBalanceResult.entrySet()) {
+                IntraScheduler intraScheduler = entry.getKey();
+                List<Instance> instanceList = entry.getValue();
+
+                intraScheduler.addInstance(instanceList, false);
+                if ((!isIntraSchedulerBusy.containsKey(intraScheduler) || !isIntraSchedulerBusy.get(intraScheduler))
+                        && !intraScheduler.isQueuesEmpty()) {
+                    LOGGER.info("LoadBalance");
+                    send(this, intraLoadBalancer.getLoadBalanceCostTime(), CloudSimTag.INTRA_SCHEDULE_BEGIN, intraScheduler);
                     isIntraSchedulerBusy.put(intraScheduler, true);
                 }
             }
@@ -1232,7 +1284,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
         Set<UserRequest> failedUserRequests = outDatedUserRequests;
 
         for (UserRequest userRequest : outDatedUserRequests) {
-            userRequest.addFailReason("outDated");
+            userRequest.addFailReason("interSchedule outDated");
         }
 
         for (InstanceGroup instanceGroup : failedInstanceGroups) {

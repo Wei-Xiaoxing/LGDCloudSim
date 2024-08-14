@@ -502,7 +502,11 @@ public class CloudInformationService extends CloudSimEntity {
 
         releaseBwForFailedUserRequest(userRequest);
 
-        releaseHostResourceForFailedUserRequest(userRequest);
+        // 避免在释放资源时，未申请Bw的InstanceGroup的ReceiveDatacenter未被清空
+        for(InstanceGroup instanceGroup : userRequest.getInstanceGroups()) {
+            instanceGroup.setReceiveDatacenter(Datacenter.NULL);
+            getSimulation().getSqlRecord().recordInstanceGroupFinishInfo(instanceGroup);
+        }
     }
 
     /**
@@ -527,6 +531,8 @@ public class CloudInformationService extends CloudSimEntity {
             Datacenter dest = allocateEdge.getDst().getReceiveDatacenter();
             if (src != null && dest != null) {
                 getSimulation().getNetworkTopology().releaseBw(src, dest, allocatedBw);
+                getSimulation().getSqlRecord().recordInstanceGroupGraphReleaseInfoForFailedUserRequest(instanceGroupSrc.getId(), instanceGroupDst.getId());
+                userRequest.delAllocatedEdge(allocateEdge);
             }
         }
     }
