@@ -10,7 +10,7 @@
           "interLoadBalancer": {
             "type": "round"
           },
-          "interScheduler": {
+          "interSchedulers": {
             "type": "wxl",
             "target": "dc",
             "enablePipeline": false,
@@ -67,7 +67,7 @@
               "type": "FirstFit"
             }
           ],
-          "loadBalancer": {
+          "intraLoadBalancer": {
             "type": "batch"
           },
           "resourceAllocateSelector": {
@@ -93,7 +93,7 @@
           "interLoadBalancer": {
             "type": "round"
           },
-          "interScheduler": {
+          "interSchedulers": {
             "type": "wxl",
             "target": "dc",
             "enablePipeline": false,
@@ -150,7 +150,7 @@
               "type": "FirstFit"
             }
           ],
-          "loadBalancer": {
+          "intraLoadBalancer": {
             "type": "batch"
           },
           "resourceAllocateSelector": {
@@ -176,7 +176,7 @@
           "interLoadBalancer": {
             "type": "round"
           },
-          "interScheduler": {
+          "interSchedulers": {
             "type": "wxl",
             "target": "dc",
             "enablePipeline": false,
@@ -233,7 +233,7 @@
               "type": "FirstFit"
             }
           ],
-          "loadBalancer": {
+          "intraLoadBalancer": {
             "type": "batch"
           },
           "resourceAllocateSelector": {
@@ -259,7 +259,7 @@
           "interLoadBalancer": {
             "type": "round"
           },
-          "interScheduler": {
+          "interSchedulers": {
             "type": "wxl",
             "target": "dc",
             "enablePipeline": false,
@@ -316,7 +316,7 @@
               "type": "FirstFit"
             }
           ],
-          "loadBalancer": {
+          "intraLoadBalancer": {
             "type": "batch"
           },
           "resourceAllocateSelector": {
@@ -342,7 +342,7 @@
           "interLoadBalancer": {
             "type": "round"
           },
-          "interScheduler": {
+          "interSchedulers": {
             "type": "wxl",
             "target": "dc",
             "enablePipeline": false,
@@ -399,7 +399,7 @@
               "type": "FirstFit"
             }
           ],
-          "loadBalancer": {
+          "intraLoadBalancer": {
             "type": "batch"
           },
           "resourceAllocateSelector": {

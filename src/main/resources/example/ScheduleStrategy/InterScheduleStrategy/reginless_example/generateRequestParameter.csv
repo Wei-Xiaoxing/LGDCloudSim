@@ -1,14 +1,14 @@
   Parament Name,Parament
 DcDistribution,"{""1"":{""Taiwan"":1},""2"":{""Hong Kong"":1},""3"":{""Japan"":1},""4"":{""Japan"":1},""5"":{""South Korea"":1}}"
-RequestPerNumMin,32
-RequestPerNumMax,64
+RequestPerNumMin,16
+RequestPerNumMax,32
 RequestTimeIntervalMin,1000
 RequestTimeIntervalMax,5000
 RequestTimes,100
 ScheduleDelayLimitMin,999000
 ScheduleDelayLimitMax,999000
-RequestGroupNumMin,2
-RequestGroupNumMax,8
+RequestGroupNumMin,4
+RequestGroupNumMax,16
 GroupInstanceNumMin,3
 GroupInstanceNumMax,5
 GroupAccessDelayPercent,0.3

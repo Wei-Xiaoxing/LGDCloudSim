@@ -3,14 +3,25 @@ package org.lgdcloudsim.util;
 import com.alibaba.fastjson.JSON;
 import okhttp3.*;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author 魏鑫磊
  * @date 2024/5/1 19:14
  */
 public class Client {
 
+
+    public final static int CONNECT_TIMEOUT =60;
+    public final static int READ_TIMEOUT=100;
+    public final static int WRITE_TIMEOUT=60;
+
     public static Object request(String suffix, Object params){
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)//设置读取超时时间
+                .writeTimeout(WRITE_TIMEOUT,TimeUnit.SECONDS)//设置写的超时时间
+                .connectTimeout(CONNECT_TIMEOUT,TimeUnit.SECONDS)//设置连接超时时间
+                .build();
 
         // 定义 URL 和 JSON 数据
         String url = "http://localhost:5000/api/" + suffix;

@@ -73,7 +73,6 @@ public class InterScheduleStrategyWxl {
             datacenterDTO.setCpuPrice(datacenter.getPricePerCpuPerSec());
             datacenterDTO.setStoPrice(datacenter.getPricePerStoragePerSec());
             datacenterDTOList.add(datacenterDTO);
-            System.out.println(datacenterDTO);
         }
         Client.request("init", datacenterDTOList);
 
