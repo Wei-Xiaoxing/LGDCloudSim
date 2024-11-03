@@ -73,47 +73,6 @@ public enum CloudActionTags implements CloudSimTags {
      */
     USER_REQUEST_FAIL,
 
-    /**
-     * Synchronize host states to inter-scheduler between data centers.
-     * It will be executed periodically.
-     */
-    public static final int SYN_STATE_BETWEEN_DC = USER_REQUEST_FAIL - 1;
-
-    /**
-     * Synchronize host states to intra-scheduler in the data center.
-     * It will be executed periodically.
-     */
-    public static final int SYN_STATE_BETWEEN_CENTER_AND_INTRA_SCHEDULER_IN_DC = SYN_STATE_BETWEEN_DC - 1;
-
-    /**
-     * Denotes the end of the execution of instances.
-     * This tag is used by the {@link org.lgdcloudsim.datacenter.Datacenter}.
-     * the {@link org.lgdcloudsim.core.events.SimEvent#getData()} must be a list of {@link org.lgdcloudsim.request.Instance} objects
-     * which are finishing at the same time.
-     */
-    public static final int SYN_STATE_BY_HEARTBEAT_IN_DC = SYN_STATE_BETWEEN_CENTER_AND_INTRA_SCHEDULER_IN_DC - 1;
-
-    /**
-     * Denotes the end of the execution of instances.
-     * This tag is used by the {@link org.lgdcloudsim.datacenter.Datacenter}.
-     * the {@link org.lgdcloudsim.core.events.SimEvent#getData()} must be a list of {@link org.lgdcloudsim.request.Instance} objects
-     * which are finishing at the same time.
-     */
-    public static final int END_INSTANCE_RUN = SYN_STATE_BY_HEARTBEAT_IN_DC - 1;
-
-    /**
-     * Periodically modify the scope of each collaboration zone.
-     * This tag is used to notify the {@link CloudInformationService} to change the collaboration zone.
-     */
-    public static final int CHANGE_COLLABORATION_SYN = END_INSTANCE_RUN - 1;
-
-    /**
-     * Denotes a request from a Datacenter to register itself. This tag is normally used
-     * between {@link CloudInformationService} and Datacenter entities.
-     * When such a {@link org.lgdcloudsim.core.events.SimEvent} is sent, the {@link org.lgdcloudsim.core.events.SimEvent#getData()}
-     * must be a {@link org.lgdcloudsim.datacenter.Datacenter} object.
-     */
-    public static final int DC_REGISTRATION_REQUEST = CHANGE_COLLABORATION_SYN - 1;
 
     /**
      * Denotes a request from the {@link org.lgdcloudsim.user.UserSimple} to a {@link CloudInformationService} to get

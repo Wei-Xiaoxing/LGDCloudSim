@@ -77,6 +77,9 @@ public class DatacenterNull implements Datacenter {
     }
 
     @Override
+    public List<InterScheduler> getInterSchedulers() { return null; }
+
+    @Override
     public Datacenter setInterSchedulers(List<InterScheduler> interSchedulers) {
         return null;
     }

@@ -1,6 +1,8 @@
 package org.lgdcloudsim.interscheduler.wxl;
 
 import org.lgdcloudsim.datacenter.Datacenter;
+import org.lgdcloudsim.interscheduler.InterScheduler;
+import org.lgdcloudsim.interscheduler.InterSchedulerWxl;
 import org.lgdcloudsim.network.NetworkTopology;
 import org.lgdcloudsim.statemanager.SimpleStateEasyObject;
 
@@ -28,8 +30,23 @@ public class CloudEnvDecoder {
 
             DatacenterAvailableDTO datacenterAvailableDTO=new DatacenterAvailableDTO();
             datacenterAvailableDTO.setId(datacenter.getId());
-            datacenterAvailableDTO.setAvailableCpu(simpleStateEasyObject.getCpuAvailableSum());
-            datacenterAvailableDTO.setAvailableSto(simpleStateEasyObject.getStorageAvailableSum());
+            long cpu=simpleStateEasyObject.getCpuAvailableSum();
+            long sto=simpleStateEasyObject.getStorageAvailableSum();
+            for (Datacenter datacenter1:
+                 datacenterList) {
+                if (datacenter.getId()!=datacenter.getId()) {
+                    for (InterScheduler interScheduler :
+                            datacenter1.getInterSchedulers()) {
+                        SimpleStateEasyObject simpleStateEasyObject1=((InterSchedulerWxl)interScheduler).datacenterResourceUsageMap.get(datacenter);
+                        if (simpleStateEasyObject1!=null) {
+                            cpu-=simpleStateEasyObject1.getCpuAvailableSum();
+                            sto-=simpleStateEasyObject1.getStorageAvailableSum();
+                        }
+                    }
+                }
+            }
+            datacenterAvailableDTO.setAvailableCpu(cpu);
+            datacenterAvailableDTO.setAvailableSto(sto);
             datacenterDTOList.add(datacenterAvailableDTO);
         }
 

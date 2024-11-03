@@ -49,7 +49,7 @@
           "interLoadBalancer": {
             "type": "round"
           },
-          "interSchedulers": {
+          "interSchedulers": [{
             "type": "wxl",
             "target": "dc",
             "isSupportForward": false,
@@ -65,7 +65,39 @@
                 "synStateType": "easySimple"
               }
             ]
-          }
+          },{
+            "type": "wxl",
+            "target": "dc",
+            "isSupportForward": false,
+            "dcStateSynInfo": [
+              {
+                "dcId": 1,
+                "synInterval": 0,
+                "synStateType": "easySimple"
+              },
+              {
+                "dcId": 2,
+                "synInterval": 0,
+                "synStateType": "easySimple"
+              }
+            ]
+          },{
+            "type": "wxl",
+            "target": "dc",
+            "isSupportForward": false,
+            "dcStateSynInfo": [
+              {
+                "dcId": 1,
+                "synInterval": 0,
+                "synStateType": "easySimple"
+              },
+              {
+                "dcId": 2,
+                "synInterval": 0,
+                "synStateType": "easySimple"
+              }
+            ]
+          }]
         },
         {
           "id": 2,

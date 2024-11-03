@@ -7,7 +7,9 @@ import org.lgdcloudsim.core.FactorySimple;
 import org.lgdcloudsim.core.Simulation;
 import org.lgdcloudsim.datacenter.Datacenter;
 import org.lgdcloudsim.datacenter.InitDatacenter;
+import org.lgdcloudsim.interscheduler.InterScheduler;
 import org.lgdcloudsim.interscheduler.wxl.DatacenterDTO;
+import org.lgdcloudsim.interscheduler.wxl.SchedulerDTO;
 import org.lgdcloudsim.network.NetworkTopology;
 import org.lgdcloudsim.network.NetworkTopologySimple;
 import org.lgdcloudsim.user.UserRequestManager;
@@ -18,6 +20,7 @@ import org.lgdcloudsim.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * You can customize InterScheduler's scheduling strategy,
@@ -72,6 +75,11 @@ public class InterScheduleStrategyWxl {
             datacenterDTO.setId(datacenter.getId());
             datacenterDTO.setCpuPrice(datacenter.getPricePerCpuPerSec());
             datacenterDTO.setStoPrice(datacenter.getPricePerStoragePerSec());
+            datacenterDTO.setSchedulerList(datacenter.getInterSchedulers().stream().map(is->{
+                SchedulerDTO dto=new SchedulerDTO();
+                dto.setId(is.getId());
+                return dto;
+            }).collect(Collectors.toList()));
             datacenterDTOList.add(datacenterDTO);
         }
         Client.request("init", datacenterDTOList);

@@ -8,10 +8,12 @@ import org.lgdcloudsim.loadbalancer.LoadBalancer;
 import org.lgdcloudsim.queue.InstanceQueue;
 import org.lgdcloudsim.request.Instance;
 import org.lgdcloudsim.request.InstanceGroup;
+import org.lgdcloudsim.statemanager.SimpleStateEasyObject;
 import org.lgdcloudsim.statemanager.StatesManager;
 
 import java.awt.geom.Point2D;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -35,6 +37,11 @@ public interface Datacenter extends SimEntity, DatacenterPrice {
      * Set the load balancer that is used to distribute the instances to the inter-schedulers.
      */
     Datacenter setInterLoadBalancer(LoadBalancer<InstanceGroup, InterScheduler> interLoadBalancer);
+
+    /**
+     * Get the {@link InterScheduler}s.
+     */
+    List<InterScheduler> getInterSchedulers();
 
     /**
      * Set the {@link InterScheduler}s.

@@ -175,6 +175,8 @@ public class InterSchedulerWxl implements InterScheduler {
     @Getter
     int traversalTime = 0;
 
+    public HashMap<Datacenter,SimpleStateEasyObject> datacenterResourceUsageMap=new HashMap<>();
+
     /**
      * The constructor of the InterSchedulerSimple class.
      * @param id the id of the inter-scheduler
@@ -360,6 +362,26 @@ public class InterSchedulerWxl implements InterScheduler {
         synBetweenDcState(realTimeSynDcList);
     }
 
+    int count=0;
+
+
+    protected InterSchedulerResult randomScheduleToDatacenter(List<InstanceGroup> instanceGroups) {
+        List<Datacenter> allDatacenters = simulation.getCollaborationManager().getDatacenters(collaborationId);
+        InterSchedulerResult interSchedulerResult = new InterSchedulerResult(this, allDatacenters);
+        Map<InstanceGroup, List<Datacenter>> instanceGroupAvailableDatacenters = filterSuitableDatacenterByNetwork(instanceGroups);
+
+        for (Map.Entry<InstanceGroup, List<Datacenter>> scheduleRes : instanceGroupAvailableDatacenters.entrySet()) {
+            if (scheduleRes.getValue().isEmpty()) {
+                interSchedulerResult.getFailedInstanceGroups().add(scheduleRes.getKey());
+            } else {
+                Datacenter target = scheduleRes.getValue().get(random.nextInt(scheduleRes.getValue().size()));
+                interSchedulerResult.addDcResult(scheduleRes.getKey(), target);
+            }
+        }
+
+        return interSchedulerResult;
+    }
+
     /**
      * Randomly select one of all data centers that may have sufficient resources.
      * If the sum of the remaining resources in all data centers does not meet the resources required by the instance group,
@@ -368,41 +390,49 @@ public class InterSchedulerWxl implements InterScheduler {
      * @return the result of the inter-scheduler
      */
     protected InterSchedulerResult scheduleToDatacenter(List<InstanceGroup> instanceGroups) {
-        UserRequestDecodeResult userRequestDecodeResult =UserRequestDecoder.toDTO(instanceGroups);
-        List<UserRequestDTO> userRequestList = userRequestDecodeResult.getUserRequestDTOList();
+        InterSchedulerResult interSchedulerResult;
         List<Datacenter> allDatacenters = simulation.getCollaborationManager().getDatacenters(collaborationId);
         NetworkTopology networkTopology = simulation.getNetworkTopology();
-        for (int i = 0; i < userRequestList.size(); i++) {
-            List<AccessLatencyDTO> accessLatencyList = new ArrayList<>();
-            for (Datacenter datacenter :
-                    allDatacenters) {
-                accessLatencyList.add(new AccessLatencyDTO(datacenter.getId(), networkTopology.getAccessLatency(userRequestDecodeResult.getUserRequestList().get(i), datacenter)));
+
+        if ((count++) < 30) {
+            interSchedulerResult = randomScheduleToDatacenter(instanceGroups);
+        } else {
+            UserRequestDecodeResult userRequestDecodeResult =UserRequestDecoder.toDTO(instanceGroups);
+            List<UserRequestDTO> userRequestList = userRequestDecodeResult.getUserRequestDTOList();
+            for (int i = 0; i < userRequestList.size(); i++) {
+                List<AccessLatencyDTO> accessLatencyList = new ArrayList<>();
+                for (Datacenter datacenter :
+                        allDatacenters) {
+                    accessLatencyList.add(new AccessLatencyDTO(datacenter.getId(), networkTopology.getAccessLatency(userRequestDecodeResult.getUserRequestList().get(i), datacenter)));
+                }
+                userRequestList.get(i).setAccessLatencyList(accessLatencyList);
             }
-            userRequestList.get(i).setAccessLatencyList(accessLatencyList);
-        }
 
-        CloudEnvDTO cloudEnv =CloudEnvDecoder.toDTO(
-                interScheduleSimpleStateMap,
-                networkTopology,
-                simulation.getCollaborationManager().getDatacenters(collaborationId));
-        Datacenter datacenter0=getDatacenter();
-        ScheduleDTO schedule=new ScheduleDTO(
-                datacenter0!=null?datacenter0.getId():1,
-                cloudEnv,userRequestList);
+            CloudEnvDTO cloudEnv =CloudEnvDecoder.toDTO(
+                    interScheduleSimpleStateMap,
+                    networkTopology,
+                    simulation.getCollaborationManager().getDatacenters(collaborationId));
+            Datacenter datacenter0=getDatacenter();
+            ScheduleDTO schedule=new ScheduleDTO(
+                    datacenter0!=null?datacenter0.getId():1,
+                    id,
+                    cloudEnv,userRequestList);
 
-        Object data = Client.request("schedule", schedule);
-        List<ScheduleInstanceGroupDTO> scheduleInstanceGroupDTOList=JSON.parseArray((String) data, ScheduleInstanceGroupDTO.class);
+            Object data = Client.request("schedule", schedule);
+            List<ScheduleInstanceGroupDTO> scheduleInstanceGroupDTOList=JSON.parseArray((String) data, ScheduleInstanceGroupDTO.class);
 
-        InterSchedulerResult interSchedulerResult = new InterSchedulerResult(this, allDatacenters);
+            interSchedulerResult = new InterSchedulerResult(this, allDatacenters);
 
-        for (InstanceGroup instanceGroup: instanceGroups){
-            for (ScheduleInstanceGroupDTO scheduleInstanceGroupDTO: scheduleInstanceGroupDTOList){
-                if (Objects.equals(instanceGroup.getId(), scheduleInstanceGroupDTO.getId())) {
-                    Datacenter datacenter1 = simulation.getCollaborationManager().getDatacenterById(scheduleInstanceGroupDTO.getTarget_datacenter_id());
-                    interSchedulerResult.addDcResult(instanceGroup, datacenter1);
+            for (InstanceGroup instanceGroup: instanceGroups){
+                for (ScheduleInstanceGroupDTO scheduleInstanceGroupDTO: scheduleInstanceGroupDTOList){
+                    if (Objects.equals(instanceGroup.getId(), scheduleInstanceGroupDTO.getId())) {
+                        Datacenter datacenter1 = simulation.getCollaborationManager().getDatacenterById(scheduleInstanceGroupDTO.getTarget_datacenter_id());
+                        interSchedulerResult.addDcResult(instanceGroup, datacenter1);
+                    }
                 }
             }
         }
+
 
 //        List<Datacenter> allDatacenters = simulation.getCollaborationManager().getDatacenters(collaborationId);
 //        InterSchedulerResult interSchedulerResult = new InterSchedulerResult(this, allDatacenters);
@@ -453,6 +483,18 @@ public class InterSchedulerWxl implements InterScheduler {
 //                userRequest.setState(UserRequest.FAILED);
             }
         }
+
+        for ( Map.Entry<Datacenter, List<InstanceGroup>> datacenterInstanceGroupEntry: interSchedulerResult2.getScheduledResultMap().entrySet()) {
+            long cpu=0;
+            long sto=0;
+            for (InstanceGroup instanceGroup1: datacenterInstanceGroupEntry.getValue()) {
+                cpu+=instanceGroup1.getCpuSum();
+                sto+=instanceGroup1.getStorageSum();
+            }
+            datacenterResourceUsageMap.put(datacenterInstanceGroupEntry.getKey(),
+                    new SimpleStateEasyObject(5,cpu,0,sto,0,0,0,0,0));
+        }
+
 
         return interSchedulerResult2;
 //        return interSchedulerResult;

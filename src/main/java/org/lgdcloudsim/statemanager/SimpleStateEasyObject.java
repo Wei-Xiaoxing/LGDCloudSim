@@ -95,6 +95,9 @@ public class SimpleStateEasyObject {
      * @param bw the bw to be allocated.
      */
     public void allocateResource(long cpu, long ram, long storage, long bw) {
+        if (cpuAvailableSum<cpu){
+            throw new RuntimeException("cpu not satisfied:"+cpuAvailableSum+":"+cpu);
+        }
         cpuAvailableSum -= cpu;
         ramAvailableSum -= ram;
         storageAvailableSum -= storage;

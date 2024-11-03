@@ -23,6 +23,7 @@ import org.lgdcloudsim.request.Instance;
 import org.lgdcloudsim.request.InstanceGroup;
 import org.lgdcloudsim.request.InstanceGroupEdge;
 import org.lgdcloudsim.request.UserRequest;
+import org.lgdcloudsim.statemanager.SimpleStateEasyObject;
 import org.lgdcloudsim.statemanager.StatesManager;
 import org.lgdcloudsim.util.FailedOutdatedResult;
 import org.slf4j.Logger;
@@ -103,6 +104,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
     /**
      * A list of {@link InterScheduler}.
      */
+    @Getter
     @Setter
     private List<InterScheduler> interSchedulers;
 

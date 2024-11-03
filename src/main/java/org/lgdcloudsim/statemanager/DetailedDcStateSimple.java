@@ -101,6 +101,9 @@ public class DetailedDcStateSimple {
         hostStates[hostId * HostState.STATE_NUM + 1] -= instance.getRam();
         hostStates[hostId * HostState.STATE_NUM + 2] -= instance.getStorage();
         hostStates[hostId * HostState.STATE_NUM + 3] -= instance.getBw();
+        if (cpuAvailableSum<instance.getCpu()){
+            throw new RuntimeException("cpu not satisfied:"+cpuAvailableSum+":"+instance.getCpu());
+        }
         cpuAvailableSum -= instance.getCpu();
         ramAvailableSum -= instance.getRam();
         storageAvailableSum -= instance.getStorage();

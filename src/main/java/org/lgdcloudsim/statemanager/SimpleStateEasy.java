@@ -64,6 +64,9 @@ public class SimpleStateEasy implements SimpleState {
 
     @Override
     public SimpleState updateSimpleStateAllocated(int hostId, int[] hostState, Instance instance) {
+        if (cpuAvailableSum<instance.getCpu()){
+            throw new RuntimeException("cpu not satisfied:"+cpuAvailableSum+":"+instance.getCpu());
+        }
         cpuAvailableSum -= instance.getCpu();
         ramAvailableSum -= instance.getRam();
         storageAvailableSum -= instance.getStorage();

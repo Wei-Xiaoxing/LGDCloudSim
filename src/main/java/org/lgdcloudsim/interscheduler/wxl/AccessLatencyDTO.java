@@ -11,11 +11,14 @@ public class AccessLatencyDTO {
 
     private Integer datacenterId;
 
+    private Integer key;
+
     private Double value;
 
     public AccessLatencyDTO(){}
     public AccessLatencyDTO(Integer id, Double value){
         this.datacenterId = id;
+        this.key = id;
         this.value = value;
     }
 }

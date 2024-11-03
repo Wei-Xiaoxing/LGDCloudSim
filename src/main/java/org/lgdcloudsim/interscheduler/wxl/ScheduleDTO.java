@@ -17,6 +17,8 @@ public class ScheduleDTO {
 
     private Integer datacenterId;
 
+    private Integer schedulerId;
+
     private CloudEnvDTO cloudEnv;
 
     private List<UserRequestDTO> userRequestList;
