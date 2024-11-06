@@ -4,12 +4,12 @@ RequestPerNumMin,16
 RequestPerNumMax,32
 RequestTimeIntervalMin,1000
 RequestTimeIntervalMax,5000
-RequestTimes,100
+RequestTimes,300
 ScheduleDelayLimitMin,999000
 ScheduleDelayLimitMax,999000
-RequestGroupNumMin,4
-RequestGroupNumMax,16
-GroupInstanceNumMin,3
+RequestGroupNumMin,2
+RequestGroupNumMax,8
+GroupInstanceNumMin,1
 GroupInstanceNumMax,5
 GroupAccessDelayPercent,0.3
 GroupAccessDelayMin,30
@@ -33,6 +33,6 @@ InstanceStorageNumMax,80
 InstanceBwNumMin,20
 InstanceBwNumMax,120
 InstanceLifeTimeMin,10000
-InstanceLifeTimeMax,40000
+InstanceLifeTimeMax,70000
 InstanceRetryTimesMin,0
 InstanceRetryTimesMax,0
