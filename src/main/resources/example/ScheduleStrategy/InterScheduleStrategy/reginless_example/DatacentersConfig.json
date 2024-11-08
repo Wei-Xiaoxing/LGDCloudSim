@@ -8,7 +8,7 @@
           "name": "DatacenterSimple1-west",
           "region": "us-east1",
           "interLoadBalancer": {
-            "type": "round"
+            "type": "batch"
           },
           "interSchedulers": {
             "type": ["wxl", "wxl", "wxl"],
@@ -91,7 +91,7 @@
           "name": "DatacenterSimple2-west",
           "region": "asia-east2",
           "interLoadBalancer": {
-            "type": "round"
+            "type": "batch"
           },
           "interSchedulers": {
             "type": ["wxl", "wxl", "wxl"],
@@ -174,7 +174,7 @@
           "name": "DatacenterSimple3-east",
           "region": "asia-northeast1",
           "interLoadBalancer": {
-            "type": "round"
+            "type": "batch"
           },
           "interSchedulers": {
             "type": ["wxl", "wxl", "wxl"],
@@ -257,7 +257,7 @@
           "name": "DatacenterSimple4-east",
           "region": "asia-northeast2",
           "interLoadBalancer": {
-            "type": "round"
+            "type": "batch"
           },
           "interSchedulers": {
             "type": ["wxl", "wxl", "wxl"],
@@ -340,7 +340,7 @@
           "name": "DatacenterSimple5-east",
           "region": "asia-northeast3",
           "interLoadBalancer": {
-            "type": "round"
+            "type": "batch"
           },
           "interSchedulers": {
             "type": ["wxl", "wxl", "wxl"],
