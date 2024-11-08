@@ -245,9 +245,55 @@ public class InterSchedulerWxl implements InterScheduler {
         }
         double end = System.currentTimeMillis();
 
+        interSchedulerResult = checkInstanceGroupScheduleResult(interSchedulerResult);
+
         this.scheduleTime = Math.max(0.1, end - start);
         interSchedulerResult.setOutDatedUserRequests(queueResult.getOutDatedItems());
         return interSchedulerResult;
+    }
+
+    private InterSchedulerResult checkInstanceGroupScheduleResult(InterSchedulerResult interSchedulerResult) {
+        InterSchedulerResult interSchedulerResultTmp = new InterSchedulerResult(this, simulation.getCollaborationManager().getDatacenters(collaborationId));
+        for(InstanceGroup failedInstanceGroup: interSchedulerResult.getFailedInstanceGroups()){
+            interSchedulerResultTmp.addFailedInstanceGroup(failedInstanceGroup);
+        }
+        for(Map.Entry<Datacenter, List<InstanceGroup>> dcResultEntry: interSchedulerResult.getScheduledResultMap().entrySet()) {
+            Datacenter datacenter = dcResultEntry.getKey();
+            for(InstanceGroup instanceGroup: dcResultEntry.getValue()){
+                if(checkInstanceGroupLimit(instanceGroup, datacenter, simulation.getNetworkTopology(), interSchedulerResult)){
+                    interSchedulerResultTmp.addDcResult(instanceGroup, datacenter);
+                } else {
+                    interSchedulerResultTmp.addFailedInstanceGroup(instanceGroup);
+                    instanceGroup.getUserRequest().addFailReason("network topology constraints");
+                }
+            }
+        }
+        return interSchedulerResultTmp;
+    }
+
+    private boolean checkInstanceGroupLimit(InstanceGroup instanceGroup, Datacenter datacenter, NetworkTopology networkTopology, InterSchedulerResult interSchedulerResult) {
+        // 检查单点约束是否满足
+        if (instanceGroup.getAccessLatency() < networkTopology.getAccessLatency(instanceGroup.getUserRequest(), datacenter)) {
+            return false;
+        }
+        // 检查拓扑约束是否满足
+        for (InstanceGroup dstInstanceGroup : instanceGroup.getUserRequest().getInstanceGroupGraph().getDstList(instanceGroup)) {
+            Datacenter scheduledDatacenter = getPossibleScheduledDatacenter(dstInstanceGroup, interSchedulerResult);
+            if (scheduledDatacenter != Datacenter.NULL) {
+                if(networkTopology.getDelay(datacenter, scheduledDatacenter) > instanceGroup.getUserRequest().getInstanceGroupGraph().getDelay(instanceGroup, dstInstanceGroup)) {
+                    return false;
+                }
+            }
+        }
+        for (InstanceGroup srcInstanceGroup : instanceGroup.getUserRequest().getInstanceGroupGraph().getSrcList(instanceGroup)) {
+            Datacenter scheduledDatacenter = getPossibleScheduledDatacenter(srcInstanceGroup, interSchedulerResult);
+            if (scheduledDatacenter != Datacenter.NULL) {
+                if(networkTopology.getDelay(datacenter, scheduledDatacenter) > instanceGroup.getUserRequest().getInstanceGroupGraph().getDelay(srcInstanceGroup, instanceGroup)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -394,7 +440,7 @@ public class InterSchedulerWxl implements InterScheduler {
         List<Datacenter> allDatacenters = simulation.getCollaborationManager().getDatacenters(collaborationId);
         NetworkTopology networkTopology = simulation.getNetworkTopology();
 
-        if ((count++) < 30) {
+        if ((count++) < 30 ) {
             interSchedulerResult = randomScheduleToDatacenter(instanceGroups);
         } else {
             UserRequestDecodeResult userRequestDecodeResult =UserRequestDecoder.toDTO(instanceGroups);
@@ -461,24 +507,24 @@ public class InterSchedulerWxl implements InterScheduler {
             UserRequest userRequest = instanceGroup.getUserRequest();
             InstanceGroupGraph instanceGroupGraph = userRequest.getInstanceGroupGraph();
             List<InstanceGroup> instanceGroups1=userRequest.getInstanceGroups();
-            boolean fail = false;
+            boolean fail = instanceGroup.getAccessLatency() < networkTopology.getAccessLatency(instanceGroup.getUserRequest(),datacenter1);
             for (InstanceGroup instanceGroup1: instanceGroups1) {
                 Datacenter datacenter2 = interSchedulerResult.getScheduledDatacenter(instanceGroup1);
                 if (datacenter2.getId() == -1) {
-                    interSchedulerResult2.addFailedInstanceGroup(instanceGroup);
                     fail = true;
                     break;
                 }
                 if (instanceGroupGraph.getDelay(instanceGroup, instanceGroup1) < networkTopology.getDelay(datacenter1, datacenter2) ||
                         instanceGroupGraph.getBw(instanceGroup, instanceGroup1) > networkTopology.getBw(datacenter1, datacenter2)) {
-                    interSchedulerResult2.addFailedInstanceGroup(instanceGroup);
                     fail = true;
                     break;
                 }
             }
+
             if (!fail) {
                 interSchedulerResult2.addDcResult(instanceGroup, interSchedulerResult.getScheduledDatacenter(instanceGroup));
             } else {
+                interSchedulerResult2.addFailedInstanceGroup(instanceGroup);
 //                instanceGroup.setState(UserRequest.FAILED);
 //                userRequest.setState(UserRequest.FAILED);
             }
@@ -751,5 +797,13 @@ public class InterSchedulerWxl implements InterScheduler {
     public void setDatacenter(Datacenter datacenter) {
         this.datacenter = datacenter;
         this.name = "Datacenter" + datacenter.getId() + "-InterScheduler" + id;
+    }
+
+    private static Datacenter getPossibleScheduledDatacenter(InstanceGroup instanceGroup, InterSchedulerResult interSchedulerResult) {
+        if (instanceGroup.getReceiveDatacenter() != Datacenter.NULL) {
+            return instanceGroup.getReceiveDatacenter();
+        } else {
+            return interSchedulerResult.getScheduledDatacenter(instanceGroup);
+        }
     }
 }
