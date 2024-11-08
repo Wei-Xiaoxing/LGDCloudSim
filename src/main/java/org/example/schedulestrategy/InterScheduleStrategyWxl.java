@@ -85,6 +85,8 @@ public class InterScheduleStrategyWxl {
         Client.request("init", datacenterDTOList);
 
         lgdcloudsim.start();
+
+        Client.request("end", datacenterDTOList);
     }
 
     private void initUser() {
