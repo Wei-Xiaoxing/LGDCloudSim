@@ -33,6 +33,6 @@ InstanceStorageNumMax,80
 InstanceBwNumMin,20
 InstanceBwNumMax,120
 InstanceLifeTimeMin,10000
-InstanceLifeTimeMax,90000
+InstanceLifeTimeMax,150000
 InstanceRetryTimesMin,0
 InstanceRetryTimesMax,0

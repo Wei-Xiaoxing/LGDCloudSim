@@ -448,7 +448,7 @@ public class InterSchedulerSimple implements InterScheduler {
             UserRequest userRequest = instanceGroup.getUserRequest();
             InstanceGroupGraph instanceGroupGraph = userRequest.getInstanceGroupGraph();
             List<InstanceGroup> instanceGroups1=userRequest.getInstanceGroups();
-            boolean fail = false;
+            boolean fail = instanceGroup.getAccessLatency() < networkTopology.getAccessLatency(instanceGroup.getUserRequest(),datacenter1);
             for (InstanceGroup instanceGroup1: instanceGroups1) {
                 Datacenter datacenter2 = interSchedulerResult.getScheduledDatacenter(instanceGroup1);
                 if (datacenter2.getId() == -1) {
