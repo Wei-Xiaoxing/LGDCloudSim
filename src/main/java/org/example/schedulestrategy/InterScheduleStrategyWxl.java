@@ -19,6 +19,8 @@ import org.lgdcloudsim.util.Client;
 import org.lgdcloudsim.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,6 +85,12 @@ public class InterScheduleStrategyWxl {
             }).collect(Collectors.toList()));
             datacenterDTOList.add(datacenterDTO);
         }
+        datacenterDTOList.sort(new Comparator<DatacenterDTO>() {
+            @Override
+            public int compare(DatacenterDTO d1, DatacenterDTO d2) {
+                return Integer.compare(d1.getId(), d2.getId());
+            }
+        });
         Client.request("init", datacenterDTOList);
 
         lgdcloudsim.start();
