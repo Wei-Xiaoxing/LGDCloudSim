@@ -177,6 +177,8 @@ public class InterSchedulerWxl implements InterScheduler {
 
     public HashMap<Datacenter,SimpleStateEasyObject> datacenterResourceUsageMap=new HashMap<>();
 
+    public HashMap<Datacenter,List<SimpleStateEasyObject>> datacenterResourceUsageMapHistory=new HashMap<>();
+
     /**
      * The constructor of the InterSchedulerSimple class.
      * @param id the id of the inter-scheduler
@@ -533,12 +535,31 @@ public class InterSchedulerWxl implements InterScheduler {
         for ( Map.Entry<Datacenter, List<InstanceGroup>> datacenterInstanceGroupEntry: interSchedulerResult2.getScheduledResultMap().entrySet()) {
             long cpu=0;
             long sto=0;
+            long bw=0;
             for (InstanceGroup instanceGroup1: datacenterInstanceGroupEntry.getValue()) {
                 cpu+=instanceGroup1.getCpuSum();
                 sto+=instanceGroup1.getStorageSum();
+                bw+=instanceGroup1.getBwSum();
             }
-            datacenterResourceUsageMap.put(datacenterInstanceGroupEntry.getKey(),
-                    new SimpleStateEasyObject(5,cpu,0,sto,0,0,0,0,0));
+            datacenterResourceUsageMap.putIfAbsent(datacenterInstanceGroupEntry.getKey(),
+                    new SimpleStateEasyObject(5,0,0,0,0,0,0,0,0));
+            SimpleStateEasyObject simpleStateEasyObject=datacenterResourceUsageMap.get(datacenterInstanceGroupEntry.getKey());
+            simpleStateEasyObject.setCpuAvailableSum(simpleStateEasyObject.getCpuAvailableSum()+cpu);
+            simpleStateEasyObject.setStorageAvailableSum(simpleStateEasyObject.getStorageAvailableSum()+sto);
+            simpleStateEasyObject.setBwAvailableSum(simpleStateEasyObject.getBwAvailableSum()+bw);
+            datacenterResourceUsageMapHistory.putIfAbsent(datacenterInstanceGroupEntry.getKey(),
+                    new ArrayList<>());
+            List<SimpleStateEasyObject> simpleStateEasyObjectList=datacenterResourceUsageMapHistory.get(datacenterInstanceGroupEntry.getKey());
+            simpleStateEasyObjectList.add(
+                    new SimpleStateEasyObject(5,cpu,0,sto,bw,0,0,0,0)
+            );
+            if (simpleStateEasyObjectList.size()>10) {
+                SimpleStateEasyObject simpleStateEasyObject1=simpleStateEasyObjectList.get(0);
+                simpleStateEasyObject.setCpuAvailableSum(simpleStateEasyObject.getCpuAvailableSum()-simpleStateEasyObject1.getCpuAvailableSum());
+                simpleStateEasyObject.setStorageAvailableSum(simpleStateEasyObject.getStorageAvailableSum()-simpleStateEasyObject1.getCpuAvailableSum());
+                simpleStateEasyObject.setBwAvailableSum(simpleStateEasyObject.getBwAvailableSum()-simpleStateEasyObject1.getBwAvailableSum());
+                simpleStateEasyObjectList.remove(0);
+            }
         }
 
 
