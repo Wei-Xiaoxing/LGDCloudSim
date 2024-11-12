@@ -18,27 +18,27 @@
             "dcStateSynInfo": [
               {
                 "dcId": 1,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 2,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 3,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 4,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 5,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               }
             ]
@@ -51,7 +51,7 @@
           ],
           "hostStates": [
             {
-              "cpu": 32000,
+              "cpu": 24000,
               "ram": 1280000,
               "storage": 10240000,
               "bw": 5120000,
@@ -101,27 +101,27 @@
             "dcStateSynInfo": [
               {
                 "dcId": 1,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 2,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 3,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 4,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 5,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               }
             ]
@@ -134,7 +134,7 @@
           ],
           "hostStates": [
             {
-              "cpu": 32000,
+              "cpu": 24000,
               "ram": 1280000,
               "storage": 2560000,
               "bw": 5120000,
@@ -184,27 +184,27 @@
             "dcStateSynInfo": [
               {
                 "dcId": 1,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 2,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 3,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 4,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 5,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               }
             ]
@@ -217,7 +217,7 @@
           ],
           "hostStates": [
             {
-              "cpu": 640000,
+              "cpu": 64000,
               "ram": 1280000,
               "storage": 10240000,
               "bw": 5120000,
@@ -267,27 +267,27 @@
             "dcStateSynInfo": [
               {
                 "dcId": 1,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 2,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 3,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 4,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 5,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               }
             ]
@@ -300,7 +300,7 @@
           ],
           "hostStates": [
             {
-              "cpu": 32000,
+              "cpu": 24000,
               "ram": 1280000,
               "storage": 2560000,
               "bw": 5120000,
@@ -350,27 +350,27 @@
             "dcStateSynInfo": [
               {
                 "dcId": 1,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 2,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 3,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 4,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               },
               {
                 "dcId": 5,
-                "synInterval": 0,
+                "synInterval": 10,
                 "synStateType": "easySimple"
               }
             ]
@@ -383,7 +383,7 @@
           ],
           "hostStates": [
             {
-              "cpu": 32000,
+              "cpu": 24000,
               "ram": 1280000,
               "storage": 2560000,
               "bw": 5120000,
