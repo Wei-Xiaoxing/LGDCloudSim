@@ -249,7 +249,7 @@ public class InterSchedulerWxl implements InterScheduler {
 
         interSchedulerResult = checkInstanceGroupScheduleResult(interSchedulerResult);
 
-        this.scheduleTime = Math.max(0.1, end - start);
+//        this.scheduleTime = Math.max(0.1, end - start);
         interSchedulerResult.setOutDatedUserRequests(queueResult.getOutDatedItems());
         return interSchedulerResult;
     }
@@ -443,7 +443,10 @@ public class InterSchedulerWxl implements InterScheduler {
         NetworkTopology networkTopology = simulation.getNetworkTopology();
 
         if ((count++) < 30 ) {
+            double start = System.currentTimeMillis();
             interSchedulerResult = randomScheduleToDatacenter(instanceGroups);
+            double end = System.currentTimeMillis();
+            this.scheduleTime=end-start;
         } else {
             UserRequestDecodeResult userRequestDecodeResult =UserRequestDecoder.toDTO(instanceGroups);
             List<UserRequestDTO> userRequestList = userRequestDecodeResult.getUserRequestDTOList();
@@ -467,7 +470,10 @@ public class InterSchedulerWxl implements InterScheduler {
                     cloudEnv,userRequestList);
 
             Object data = Client.request("schedule", schedule);
-            List<ScheduleInstanceGroupDTO> scheduleInstanceGroupDTOList=JSON.parseArray((String) data, ScheduleInstanceGroupDTO.class);
+            ScheduleResultDTO scheduleResult=JSON.parseObject((String) data, ScheduleResultDTO.class);
+            assert scheduleResult != null;
+            List<ScheduleInstanceGroupDTO> scheduleInstanceGroupDTOList=scheduleResult.getScheduleInstanceGroupList();
+            this.scheduleTime=scheduleResult.getScheduleTime();
 
             interSchedulerResult = new InterSchedulerResult(this, allDatacenters);
 
