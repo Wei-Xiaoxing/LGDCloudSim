@@ -593,6 +593,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
         //If the InstanceGroup runs successfully, the UserRequest status information needs to be updated.
         UserRequest userRequest = instanceGroup.getUserRequest();
         userRequest.addSuccessGroupNum();
+        // System.out.println("userrequest's state:"+userRequest.getState());
         if (userRequest.getState() == UserRequest.SUCCESS) {
             updateUserRequestAfterSuccess(userRequest);
         }
@@ -622,7 +623,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
 //                System.out.println("instance group state:"+instanceGroup.getState());
 //                assert instanceGroup.getReceiveDatacenter().getId() != -1;
                 double releaseBw = userRequest.getInstanceGroupGraph().getBw(instanceGroup, dstInstanceGroup);
-                getSimulation().getNetworkTopology().releaseBw(instanceGroup.getReceiveDatacenter(), dstInstanceGroup.getReceiveDatacenter(), releaseBw);
+                // getSimulation().getNetworkTopology().releaseBw(instanceGroup.getReceiveDatacenter(), dstInstanceGroup.getReceiveDatacenter(), releaseBw);
                 getSimulation().getSqlRecord().recordInstanceGroupGraphReleaseInfo(instanceGroup.getId(), dstInstanceGroup.getId(), getSimulation().clock());
             }
         }
@@ -630,7 +631,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
         for (InstanceGroup srcInstanceGroup : srcInstanceGroups) {
             if (srcInstanceGroup.getState() == UserRequest.SUCCESS) {
                 double releaseBw = userRequest.getInstanceGroupGraph().getBw(srcInstanceGroup, instanceGroup);
-                getSimulation().getNetworkTopology().releaseBw(srcInstanceGroup.getReceiveDatacenter(), instanceGroup.getReceiveDatacenter(), releaseBw);
+                // getSimulation().getNetworkTopology().releaseBw(srcInstanceGroup.getReceiveDatacenter(), instanceGroup.getReceiveDatacenter(), releaseBw);
                 getSimulation().getSqlRecord().recordInstanceGroupGraphReleaseInfo(srcInstanceGroup.getId(), instanceGroup.getId(), getSimulation().clock());
             }
         }
@@ -642,6 +643,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
      * @param userRequest the user request
      */
     private void updateUserRequestAfterSuccess(UserRequest userRequest) {
+        // System.out.println("update user request after success");
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("{}: userRequest{} successfully completed running.", getSimulation().clockStr(), getName());
         }

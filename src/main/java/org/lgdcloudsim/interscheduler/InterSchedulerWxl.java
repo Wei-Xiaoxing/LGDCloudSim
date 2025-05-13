@@ -442,7 +442,7 @@ public class InterSchedulerWxl implements InterScheduler {
         List<Datacenter> allDatacenters = simulation.getCollaborationManager().getDatacenters(collaborationId);
         NetworkTopology networkTopology = simulation.getNetworkTopology();
 
-        if ((count++) < 30 ) {
+        if ((count++) < 0 ) {
             double start = System.currentTimeMillis();
             interSchedulerResult = randomScheduleToDatacenter(instanceGroups);
             double end = System.currentTimeMillis();
@@ -559,7 +559,7 @@ public class InterSchedulerWxl implements InterScheduler {
             simpleStateEasyObjectList.add(
                     new SimpleStateEasyObject(5,cpu,0,sto,bw,0,0,0,0)
             );
-            if (simpleStateEasyObjectList.size()>10) {
+            if (simpleStateEasyObjectList.size()>5) {
                 SimpleStateEasyObject simpleStateEasyObject1=simpleStateEasyObjectList.get(0);
                 simpleStateEasyObject.setCpuAvailableSum(simpleStateEasyObject.getCpuAvailableSum()-simpleStateEasyObject1.getCpuAvailableSum());
                 simpleStateEasyObject.setStorageAvailableSum(simpleStateEasyObject.getStorageAvailableSum()-simpleStateEasyObject1.getCpuAvailableSum());

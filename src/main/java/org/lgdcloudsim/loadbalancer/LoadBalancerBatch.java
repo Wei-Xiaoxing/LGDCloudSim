@@ -47,6 +47,19 @@ public class LoadBalancerBatch<R, S> implements LoadBalancer<R, S> {
         int startIndex = 0;
         int endIndex = 0;
         while (endIndex < size) {
+            while (endIndex+1<requests.size()) {
+                if (requests.get(endIndex) instanceof InstanceGroup) {
+                    InstanceGroup instanceGroup1=(InstanceGroup)requests.get(endIndex);
+                    InstanceGroup instanceGroup2=(InstanceGroup)requests.get(endIndex+1);
+                    if (instanceGroup1.getUserRequest()==instanceGroup2.getUserRequest()) {
+                        endIndex++;
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
             endIndex = Math.min(startIndex + batchSize, size);
             List<R> batchRequests = requests.subList(startIndex, endIndex);
             S scheduler = schedulers.get(lastDistributedId);

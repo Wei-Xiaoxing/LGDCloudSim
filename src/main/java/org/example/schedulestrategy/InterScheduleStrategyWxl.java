@@ -39,16 +39,16 @@ public class InterScheduleStrategyWxl {
 
     //The "types" field of centerScheduler in different files are different,
     // and the scheduling algorithms called are also different.
-//    private static final String DATACENTER_CONFIG_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/wxl/DatacentersConfig-" + scheduleStrategy + ".json";
-//    private static final String DATACENTER_CONFIG_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/reginless_example/DatacentersConfigSimple.json";
-   private static final String DATACENTER_CONFIG_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/reginless_example/DatacentersConfigLeastRequest.json";
+   private static final String DATACENTER_CONFIG_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/new/DatacentersConfigSimple.json";
+    // private static final String DATACENTER_CONFIG_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/new/DatacentersConfigLeastRequest.json";
 //    private static final String DATACENTER_CONFIG_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/reginless_example/DatacentersConfigTogether.json";
-    // private static final String DATACENTER_CONFIG_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/reginless_example/DatacentersConfig.json";
+    // private static final String DATACENTER_CONFIG_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/new/DatacentersConfigSimple.json";
+    // private static final String DATACENTER_CONFIG_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/new/DatacentersConfigWxl.json";
 //    private static final String USER_REQUEST_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/wxl/generateRequestParameter.csv";
-    private static final String USER_REQUEST_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/reginless_example/generateRequestParameter.csv";
-    private static final String DATACENTER_BW_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/reginless_example/DatacenterBwConfig.csv";
+    private static final String USER_REQUEST_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/new/generateRequestParameter.csv";
+    private static final String DATACENTER_BW_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/new/DatacenterBwConfig.csv";
     private static final String REGION_DELAY_FILE = "./src/main/resources/regionDelay.csv";
-    private static final String AREA_DELAY_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/reginless_example/areaDelay.csv";
+    private static final String AREA_DELAY_FILE = "./src/main/resources/example/ScheduleStrategy/InterScheduleStrategy/new/areaDelay.csv";
 
     private final Simulation lgdcloudsim;
     private final Factory factory;

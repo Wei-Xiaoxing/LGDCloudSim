@@ -49,6 +49,9 @@ public class CloudInformationService extends CloudSimEntity {
     @Getter
     private final List<Datacenter> datacenterList;
 
+    @Getter
+    private double penalty=0;
+
     /**
      * Creates a new CIS entity.
      *
@@ -517,6 +520,16 @@ public class CloudInformationService extends CloudSimEntity {
         }
     }
 
+    double calculatePenalty(UserRequest userRequest, double unitPrice){
+        double res = 0;
+        for(InstanceGroup instanceGroup : userRequest.getInstanceGroups()){
+            for(Instance instance : instanceGroup.getInstances()){
+                res += (instance.getCpu() + instance.getRam() + instance.getBw() + instance.getStorage()) * unitPrice;
+            }
+        }
+        return res;
+    }
+
     /**
      * Processes the event of the user request failed.
      * All failed user requests will be sent here for processing.
@@ -533,6 +546,7 @@ public class CloudInformationService extends CloudSimEntity {
                 Set<UserRequest> userRequests = (Set<UserRequest>) userRequestsTmp;
                 for (UserRequest userRequest : userRequests) {
                     processAUserRequestFail(userRequest);
+                    penalty += calculatePenalty(userRequest, 200);
                 }
             }
         }

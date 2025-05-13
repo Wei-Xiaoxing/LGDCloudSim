@@ -268,7 +268,8 @@ public class CloudSim implements Simulation {
      */
     private void finish() {
         LOGGER.info("Simulation finished at {}.", clockStr());
-        double allCost = 0;
+        double allCost = cis.getPenalty();
+        System.out.println("penalty:"+allCost);
         for (Datacenter datacenter : getCis().getDatacenterList()) {
             double dcCost = datacenter.getAllCost();
             System.out.printf("%s's TCO = %f\n", datacenter.getName(), dcCost);
